@@ -1,0 +1,24 @@
+export type Producto = {
+  id: string
+  nombre: string
+  categoria: string
+  unidad: string
+  precio_sugerido: number | null
+  congelado: boolean
+  disponible: boolean
+  foto_url: string | null
+  activo: boolean
+  creado_en: string
+}
+
+export type PuntoVenta = {
+  id: string
+  nombre: string
+  direccion: string | null
+  contacto: string | null
+  codigo_acceso: string
+  etiqueta_default: 'grande' | 'chica' | 'ambas'
+  pedido_minimo: number | null
+  activo: boolean
+  creado_en: string
+}
