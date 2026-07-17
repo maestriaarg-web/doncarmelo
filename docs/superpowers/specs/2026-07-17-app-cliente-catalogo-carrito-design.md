@@ -14,7 +14,7 @@ Es el corazón del sistema. La regla de negocio más importante — el corte de 
 ## Alcance de este sub-proyecto
 
 **Incluye:**
-- Acceso por código fijo (sin usuario/contraseña), persistente en el dispositivo.
+- Acceso por número de celular (sin usuario/contraseña, sin verificación por SMS), persistente en el dispositivo.
 - Catálogo de productos agrupado por categoría, con foto, indicador de congelado, disponibilidad, y buscador.
 - Carrito con cantidades, editable.
 - Selección de fecha de entrega (hoy / mañana) con cálculo automático del turno de reparto.
@@ -34,14 +34,14 @@ No se modifica el modelo de datos — `pedidos` y `pedido_items` ya existen desd
 
 Todo fuera de `/admin`, en el mismo proyecto Next.js:
 
-- **`/`** — si no hay cookie de sesión de comercio válida, muestra el formulario de código de acceso. Si ya hay cookie válida, redirige a `/pedido`.
+- **`/`** — si no hay cookie de sesión de comercio válida, muestra el formulario para ingresar el celular. Si ya hay cookie válida, redirige a `/pedido`.
 - **`/pedido`** — catálogo con buscador y carrito (pantalla principal).
 - **`/pedido/confirmar`** — resumen del carrito, fecha, turno calculado, tipo de etiqueta, botón de confirmación.
 - **`/pedido/listo`** — pantalla de confirmación final.
 
 ## Acceso del comercio
 
-- El comercio ingresa su `codigo_acceso` en `/`. Un Route Handler lo valida server-side contra `puntos_venta` (`codigo_acceso` exacto, `activo = true`).
+- El comercio ingresa su **celular** en `/`. Un Route Handler lo normaliza (deja solo dígitos, igual que hace el admin al guardarlo) y lo valida server-side contra `puntos_venta.celular` (`activo = true`).
 - Si es válido: se setea una **cookie httpOnly, sin expiración corta** (persistente en el dispositivo, según lo definido en el sub-proyecto anterior), con el `punto_venta_id`. Redirige a `/pedido`.
 - Si es inválido: mensaje de error en la misma pantalla, reintentar.
 - Todas las rutas bajo `/pedido/*` verifican esta cookie server-side (vía un helper, similar al middleware de `/admin` pero sin Supabase Auth) y redirigen a `/` si no es válida.

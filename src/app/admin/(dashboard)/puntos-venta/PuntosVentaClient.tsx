@@ -79,7 +79,7 @@ export function PuntosVentaClient({ puntosVenta }: { puntosVenta: PuntoVenta[] }
             <div className="min-w-[12rem] flex-1">
               <p className="font-medium text-neutral-900">{pv.nombre}</p>
               <p className="text-sm text-neutral-500">
-                Código: {pv.codigo_acceso} · {ETIQUETA_LABEL[pv.etiqueta_default]}
+                Celular: {pv.celular} · {ETIQUETA_LABEL[pv.etiqueta_default]}
                 {pv.pedido_minimo != null && ` · Mínimo $${pv.pedido_minimo}`}
               </p>
             </div>

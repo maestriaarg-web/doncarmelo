@@ -20,7 +20,7 @@ export type PuntoVenta = {
   nombre: string
   direccion: string | null
   contacto: string | null
-  codigo_acceso: string
+  celular: string
   etiqueta_default: 'grande' | 'chica' | 'ambas'
   pedido_minimo: number | null
   activo: boolean

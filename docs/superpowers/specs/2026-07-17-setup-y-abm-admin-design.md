@@ -22,7 +22,8 @@ No incluye: pantalla de pedidos, lista de preparación, remitos, alertas de hora
 ### Autenticación — dos mecanismos distintos, sin mezclar
 
 1. **Admin (Don Carmelo)**: Supabase Auth, email/password. Un solo usuario creado a mano en el dashboard de Supabase (no hay self-signup ni recuperación de contraseña automatizada en esta etapa). Rutas bajo `/admin` protegidas por middleware que exige sesión válida.
-2. **Comercios (app cliente, se construye en el próximo sub-proyecto pero el mecanismo se define acá porque toca `puntos_venta`)**: sin Supabase Auth. El comercio ingresa su `codigo_acceso`, un Route Handler lo valida server-side contra `puntos_venta.codigo_acceso`, y si es válido setea una **cookie httpOnly persistente** (no localStorage) en el dispositivo. Las queries del comercio siempre pasan por el servidor (Server Actions / Route Handlers) usando la service role key — nunca se expone la base directamente al browser del comercio. Decisión confirmada explícitamente con el usuario (se evaluó localStorage puro y se descartó por seguridad).
+2. **Comercios (app cliente, se construye en el próximo sub-proyecto pero el mecanismo se define acá porque toca `puntos_venta`)**: sin Supabase Auth. El comercio ingresa su **número de celular**, un Route Handler lo valida server-side contra `puntos_venta.celular` (normalizado a solo dígitos), y si es válido setea una **cookie httpOnly persistente** (no localStorage) en el dispositivo. Las queries del comercio siempre pasan por el servidor (Server Actions / Route Handlers) usando la service role key — nunca se expone la base directamente al browser del comercio. Decisión confirmada explícitamente con el usuario (se evaluó localStorage puro y se descartó por seguridad).
+   > **Actualización 2026-07-17** (durante el diseño del sub-proyecto 2): el identificador original iba a ser un código arbitrario (`codigo_acceso`) inventado por Don Carmelo. Se cambió al número de celular del comercio — mismo mecanismo (sin contraseña, sin verificación por SMS, dato precargado por el admin), pero más fácil de recordar porque el comercio no necesita que se lo comuniquen. La columna se renombró vía migración (`supabase/migrations/0002_puntos_venta_celular.sql`) y el ABM admin ya está actualizado.
 
 ## Modelo de datos (Postgres, completo para toda la Fase 1)
 
@@ -35,7 +36,7 @@ create table puntos_venta (
   nombre text not null,
   direccion text,
   contacto text,
-  codigo_acceso text unique not null,
+  celular text unique not null, -- renombrada desde codigo_acceso, ver nota arriba
   etiqueta_default text not null default 'ambas'
     check (etiqueta_default in ('grande','chica','ambas')),
   pedido_minimo numeric,

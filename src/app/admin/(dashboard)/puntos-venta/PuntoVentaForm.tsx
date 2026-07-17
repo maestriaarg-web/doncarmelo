@@ -16,7 +16,7 @@ export function PuntoVentaForm({
   const [nombre, setNombre] = useState(puntoVenta?.nombre ?? '')
   const [direccion, setDireccion] = useState(puntoVenta?.direccion ?? '')
   const [contacto, setContacto] = useState(puntoVenta?.contacto ?? '')
-  const [codigoAcceso, setCodigoAcceso] = useState(puntoVenta?.codigo_acceso ?? '')
+  const [celular, setCelular] = useState(puntoVenta?.celular ?? '')
   const [etiquetaDefault, setEtiquetaDefault] = useState<PuntoVentaInput['etiqueta_default']>(
     puntoVenta?.etiqueta_default ?? 'ambas'
   )
@@ -34,14 +34,14 @@ export function PuntoVentaForm({
       nombre,
       direccion: direccion || null,
       contacto: contacto || null,
-      codigo_acceso: codigoAcceso,
+      celular,
       etiqueta_default: etiquetaDefault,
       pedido_minimo: pedidoMinimo ? Number(pedidoMinimo) : null,
     })
     if ('error' in result) {
       setError(
         result.error.includes('duplicate key')
-          ? 'Ese código de acceso ya está en uso por otro punto de venta.'
+          ? 'Ese celular ya está registrado para otro punto de venta.'
           : result.error
       )
       setGuardando(false)
@@ -85,13 +85,19 @@ export function PuntoVentaForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-neutral-700">Código de acceso</label>
+        <label className="mb-1 block text-sm font-medium text-neutral-700">Celular</label>
         <input
-          value={codigoAcceso}
-          onChange={(e) => setCodigoAcceso(e.target.value)}
+          type="tel"
+          value={celular}
+          onChange={(e) => setCelular(e.target.value)}
           required
+          placeholder="3492 40-1234"
           className="w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
         />
+        <p className="mt-1 text-sm text-neutral-500">
+          Es el número que el comercio va a usar para entrar a hacer pedidos. Podés escribirlo con
+          espacios o guiones, se guarda solo con los números.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
