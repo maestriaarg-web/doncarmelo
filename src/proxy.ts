@@ -1,7 +1,20 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { COMERCIO_COOKIE_NAME } from '@/lib/comercio/constants'
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  if (pathname.startsWith('/pedido')) {
+    const puntoVentaId = request.cookies.get(COMERCIO_COOKIE_NAME)?.value
+    if (!puntoVentaId) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
+    return NextResponse.next({ request })
+  }
+
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -27,8 +40,8 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isLoginPage = request.nextUrl.pathname === '/admin/login'
-  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
+  const isLoginPage = pathname === '/admin/login'
+  const isAdminRoute = pathname.startsWith('/admin')
 
   if (isAdminRoute && !isLoginPage && !user) {
     const url = request.nextUrl.clone()
@@ -46,5 +59,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/pedido/:path*'],
 }
