@@ -100,8 +100,11 @@ export async function confirmarPedido(
   )
 
   if (errorItems) {
+    // Evita dejar un pedido sin items dando vueltas: si no se pudieron guardar
+    // los productos, se borra el pedido recién creado en vez de dejarlo huérfano.
+    await supabase.from('pedidos').delete().eq('id', pedido.id)
     return {
-      error: 'El pedido se guardó pero hubo un error con los productos. Contactá a Don Carmelo.',
+      error: 'No pudimos guardar los productos del pedido. Intentá de nuevo.',
     }
   }
 
