@@ -34,6 +34,22 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
     setEditando(null)
   }
 
+  async function handleToggleDisponible(id: string, disponible: boolean) {
+    try {
+      await toggleDisponible(id, disponible)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error al actualizar disponibilidad')
+    }
+  }
+
+  async function handleDarDeBaja(id: string) {
+    try {
+      await darDeBajaProducto(id)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error al dar de baja el producto')
+    }
+  }
+
   if (modo === 'nuevo') {
     return (
       <ProductoForm
@@ -119,7 +135,7 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
               <input
                 type="checkbox"
                 checked={p.disponible}
-                onChange={(e) => toggleDisponible(p.id, e.target.checked)}
+                onChange={(e) => handleToggleDisponible(p.id, e.target.checked)}
               />
               Disponible
             </label>
@@ -133,7 +149,7 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
               Editar
             </button>
             <button
-              onClick={() => darDeBajaProducto(p.id)}
+              onClick={() => handleDarDeBaja(p.id)}
               className="text-sm font-medium text-red-600 hover:text-red-800"
             >
               Baja

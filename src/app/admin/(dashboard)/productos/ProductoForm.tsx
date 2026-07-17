@@ -86,7 +86,7 @@ export function ProductoForm({
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-base"
+          className="w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
         />
       </div>
 
@@ -98,7 +98,7 @@ export function ProductoForm({
             onChange={(e) => setCategoria(e.target.value)}
             required
             list="categorias-datalist"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-base"
+            className="w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
           />
           <datalist id="categorias-datalist">
             {categoriasExistentes.map((c) => (
@@ -113,7 +113,7 @@ export function ProductoForm({
             onChange={(e) => setUnidad(e.target.value)}
             required
             placeholder="kg, unidad, paquete..."
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-base"
+            className="w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
           />
         </div>
       </div>
@@ -128,7 +128,7 @@ export function ProductoForm({
           min="0"
           value={precioSugerido}
           onChange={(e) => setPrecioSugerido(e.target.value)}
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-base"
+          className="w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
         />
       </div>
 
