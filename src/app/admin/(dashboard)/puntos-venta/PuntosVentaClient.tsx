@@ -12,7 +12,7 @@ import {
 
 const ETIQUETA_LABEL: Record<PuntoVenta['etiqueta_default'], string> = {
   grande: 'Grande sin precio',
-  chica: 'Chica con precio',
+  chica: 'Chica con precio sugerido',
   ambas: 'Ambas',
 }
 
@@ -30,6 +30,14 @@ export function PuntosVentaClient({ puntosVenta }: { puntosVenta: PuntoVenta[] }
     await actualizarPuntoVenta(editando.id, input)
     setModo('lista')
     setEditando(null)
+  }
+
+  async function handleCambiarActivo(id: string, activo: boolean) {
+    try {
+      await cambiarActivoPuntoVenta(id, activo)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error al actualizar el estado')
+    }
   }
 
   if (modo === 'nuevo') {
@@ -78,7 +86,7 @@ export function PuntosVentaClient({ puntosVenta }: { puntosVenta: PuntoVenta[] }
               <input
                 type="checkbox"
                 checked={pv.activo}
-                onChange={(e) => cambiarActivoPuntoVenta(pv.id, e.target.checked)}
+                onChange={(e) => handleCambiarActivo(pv.id, e.target.checked)}
               />
               Activo
             </label>
