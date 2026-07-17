@@ -154,7 +154,10 @@ export function ConfirmarClient({
               onChange={(e) => cambiarCantidad(item.productoId, Number(e.target.value))}
               className="w-20 rounded-md border border-neutral-300 px-2 py-2.5 text-center text-base"
             />
-            <button onClick={() => quitarItem(item.productoId)} className="text-sm font-medium text-red-600">
+            <button
+              onClick={() => quitarItem(item.productoId)}
+              className="px-2 py-2.5 text-sm font-medium text-red-600"
+            >
               Quitar
             </button>
           </li>
