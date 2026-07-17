@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Producto } from '@/lib/types'
+import { ProductosClient } from './ProductosClient'
 
 export default async function ProductosPage() {
   const supabase = await createClient()
@@ -11,12 +12,5 @@ export default async function ProductosPage() {
 
   if (error) throw new Error(error.message)
 
-  const lista = (productos ?? []) as Producto[]
-
-  return (
-    <div>
-      <h1 className="mb-4 text-xl font-semibold text-neutral-900">Productos</h1>
-      <p className="text-sm text-neutral-500">{lista.length} producto(s) cargado(s).</p>
-    </div>
-  )
+  return <ProductosClient productos={(productos ?? []) as Producto[]} />
 }
