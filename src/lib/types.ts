@@ -1,3 +1,7 @@
+// Server Actions must return errors (not throw) so the message survives
+// Next.js's production redaction of thrown Server Action errors.
+export type ActionResult = { error: string } | { success: true }
+
 export type Producto = {
   id: string
   nombre: string

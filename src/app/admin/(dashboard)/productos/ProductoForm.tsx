@@ -2,7 +2,7 @@
 
 import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { Producto } from '@/lib/types'
+import type { ActionResult, Producto } from '@/lib/types'
 import type { ProductoInput } from './actions'
 
 export function ProductoForm({
@@ -13,7 +13,7 @@ export function ProductoForm({
 }: {
   producto?: Producto
   categoriasExistentes: string[]
-  onSubmit: (input: ProductoInput) => Promise<void>
+  onSubmit: (input: ProductoInput) => Promise<ActionResult>
   onCancel: () => void
 }) {
   const [nombre, setNombre] = useState(producto?.nombre ?? '')
@@ -57,18 +57,17 @@ export function ProductoForm({
     e.preventDefault()
     setGuardando(true)
     setError(null)
-    try {
-      await onSubmit({
-        nombre,
-        categoria,
-        unidad,
-        precio_sugerido: precioSugerido ? Number(precioSugerido) : null,
-        congelado,
-        disponible,
-        foto_url: fotoUrl,
-      })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
+    const result = await onSubmit({
+      nombre,
+      categoria,
+      unidad,
+      precio_sugerido: precioSugerido ? Number(precioSugerido) : null,
+      congelado,
+      disponible,
+      foto_url: fotoUrl,
+    })
+    if ('error' in result) {
+      setError(result.error)
       setGuardando(false)
     }
   }

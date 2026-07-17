@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { PuntoVenta } from '@/lib/types'
+import type { ActionResult, PuntoVenta } from '@/lib/types'
 import { PuntoVentaForm } from './PuntoVentaForm'
 import {
   crearPuntoVenta,
@@ -20,24 +20,25 @@ export function PuntosVentaClient({ puntosVenta }: { puntosVenta: PuntoVenta[] }
   const [modo, setModo] = useState<'lista' | 'nuevo' | 'editar'>('lista')
   const [editando, setEditando] = useState<PuntoVenta | null>(null)
 
-  async function handleCrear(input: PuntoVentaInput) {
-    await crearPuntoVenta(input)
-    setModo('lista')
+  async function handleCrear(input: PuntoVentaInput): Promise<ActionResult> {
+    const result = await crearPuntoVenta(input)
+    if ('success' in result) setModo('lista')
+    return result
   }
 
-  async function handleActualizar(input: PuntoVentaInput) {
-    if (!editando) return
-    await actualizarPuntoVenta(editando.id, input)
-    setModo('lista')
-    setEditando(null)
+  async function handleActualizar(input: PuntoVentaInput): Promise<ActionResult> {
+    if (!editando) return { error: 'No hay punto de venta seleccionado' }
+    const result = await actualizarPuntoVenta(editando.id, input)
+    if ('success' in result) {
+      setModo('lista')
+      setEditando(null)
+    }
+    return result
   }
 
   async function handleCambiarActivo(id: string, activo: boolean) {
-    try {
-      await cambiarActivoPuntoVenta(id, activo)
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error al actualizar el estado')
-    }
+    const result = await cambiarActivoPuntoVenta(id, activo)
+    if ('error' in result) alert(result.error)
   }
 
   if (modo === 'nuevo') {

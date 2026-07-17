@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { Producto } from '@/lib/types'
+import type { ActionResult, Producto } from '@/lib/types'
 import { ProductoForm } from './ProductoForm'
 import {
   crearProducto,
@@ -22,32 +22,30 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
     (p) => filtroCategoria === 'todas' || p.categoria === filtroCategoria
   )
 
-  async function handleCrear(input: ProductoInput) {
-    await crearProducto(input)
-    setModo('lista')
+  async function handleCrear(input: ProductoInput): Promise<ActionResult> {
+    const result = await crearProducto(input)
+    if ('success' in result) setModo('lista')
+    return result
   }
 
-  async function handleActualizar(input: ProductoInput) {
-    if (!editando) return
-    await actualizarProducto(editando.id, input)
-    setModo('lista')
-    setEditando(null)
+  async function handleActualizar(input: ProductoInput): Promise<ActionResult> {
+    if (!editando) return { error: 'No hay producto seleccionado' }
+    const result = await actualizarProducto(editando.id, input)
+    if ('success' in result) {
+      setModo('lista')
+      setEditando(null)
+    }
+    return result
   }
 
   async function handleToggleDisponible(id: string, disponible: boolean) {
-    try {
-      await toggleDisponible(id, disponible)
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error al actualizar disponibilidad')
-    }
+    const result = await toggleDisponible(id, disponible)
+    if ('error' in result) alert(result.error)
   }
 
   async function handleDarDeBaja(id: string) {
-    try {
-      await darDeBajaProducto(id)
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error al dar de baja el producto')
-    }
+    const result = await darDeBajaProducto(id)
+    if ('error' in result) alert(result.error)
   }
 
   if (modo === 'nuevo') {

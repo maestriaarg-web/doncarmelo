@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import type { PuntoVenta } from '@/lib/types'
+import type { ActionResult, PuntoVenta } from '@/lib/types'
 import type { PuntoVentaInput } from './actions'
 
 export function PuntoVentaForm({
@@ -10,7 +10,7 @@ export function PuntoVentaForm({
   onCancel,
 }: {
   puntoVenta?: PuntoVenta
-  onSubmit: (input: PuntoVentaInput) => Promise<void>
+  onSubmit: (input: PuntoVentaInput) => Promise<ActionResult>
   onCancel: () => void
 }) {
   const [nombre, setNombre] = useState(puntoVenta?.nombre ?? '')
@@ -30,22 +30,19 @@ export function PuntoVentaForm({
     e.preventDefault()
     setGuardando(true)
     setError(null)
-    try {
-      await onSubmit({
-        nombre,
-        direccion: direccion || null,
-        contacto: contacto || null,
-        codigo_acceso: codigoAcceso,
-        etiqueta_default: etiquetaDefault,
-        pedido_minimo: pedidoMinimo ? Number(pedidoMinimo) : null,
-      })
-    } catch (err) {
+    const result = await onSubmit({
+      nombre,
+      direccion: direccion || null,
+      contacto: contacto || null,
+      codigo_acceso: codigoAcceso,
+      etiqueta_default: etiquetaDefault,
+      pedido_minimo: pedidoMinimo ? Number(pedidoMinimo) : null,
+    })
+    if ('error' in result) {
       setError(
-        err instanceof Error && err.message.includes('duplicate key')
+        result.error.includes('duplicate key')
           ? 'Ese código de acceso ya está en uso por otro punto de venta.'
-          : err instanceof Error
-            ? err.message
-            : 'Error al guardar'
+          : result.error
       )
       setGuardando(false)
     }
