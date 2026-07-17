@@ -22,6 +22,23 @@ export async function confirmarPedido(
 
   if (input.items.length === 0) return { error: 'El carrito está vacío.' }
 
+  // El Server Action es un endpoint público — no confiar en que el cliente
+  // mandó cantidades válidas ni productos sin duplicar.
+  const cantidadesPorProducto = new Map<string, number>()
+  for (const item of input.items) {
+    if (!item.productoId || !Number.isFinite(item.cantidad) || item.cantidad <= 0) {
+      return { error: 'Hay un producto con una cantidad inválida en el carrito.' }
+    }
+    cantidadesPorProducto.set(
+      item.productoId,
+      (cantidadesPorProducto.get(item.productoId) ?? 0) + item.cantidad
+    )
+  }
+  const items = Array.from(cantidadesPorProducto, ([productoId, cantidad]) => ({
+    productoId,
+    cantidad,
+  }))
+
   const supabase = createServiceClient()
 
   const { data: puntoVenta, error: errorPuntoVenta } = await supabase
@@ -34,7 +51,7 @@ export async function confirmarPedido(
     return { error: 'Tu punto de venta no está disponible. Contactá a Don Carmelo.' }
   }
 
-  const idsProductos = input.items.map((i) => i.productoId)
+  const idsProductos = items.map((i) => i.productoId)
   const { data: productos, error: errorProductos } = await supabase
     .from('productos')
     .select('id, precio_sugerido, disponible, activo')
@@ -44,7 +61,7 @@ export async function confirmarPedido(
 
   const productosPorId = new Map(productos.map((p) => [p.id, p]))
   let total = 0
-  for (const item of input.items) {
+  for (const item of items) {
     const producto = productosPorId.get(item.productoId)
     if (!producto || !producto.activo || !producto.disponible) {
       return {
@@ -92,7 +109,7 @@ export async function confirmarPedido(
   if (errorPedido || !pedido) return { error: 'No pudimos guardar el pedido. Intentá de nuevo.' }
 
   const { error: errorItems } = await supabase.from('pedido_items').insert(
-    input.items.map((item) => ({
+    items.map((item) => ({
       pedido_id: pedido.id,
       producto_id: item.productoId,
       cantidad: item.cantidad,
