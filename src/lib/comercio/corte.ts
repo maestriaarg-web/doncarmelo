@@ -12,6 +12,8 @@ function formatearFechaArgentina(fecha: Date): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: TIMEZONE }).format(fecha)
 }
 
+// Devuelve siempre "HH:mm" (2 dígitos, cero a la izquierda) — la comparación
+// por string en calcularTurno depende de este formato fijo para ordenar bien.
 function formatearHoraArgentina(fecha: Date): string {
   return new Intl.DateTimeFormat('en-GB', {
     timeZone: TIMEZONE,
