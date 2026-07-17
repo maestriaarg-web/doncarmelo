@@ -26,3 +26,11 @@ export type PuntoVenta = {
   activo: boolean
   creado_en: string
 }
+
+export type ItemCarrito = {
+  productoId: string
+  nombre: string
+  unidad: string
+  precioSugerido: number | null
+  cantidad: number
+}
