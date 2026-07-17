@@ -24,7 +24,7 @@ export default async function LoginPage({
           type="email"
           name="email"
           required
-          className="mb-4 w-full rounded-md border border-neutral-300 px-3 py-2 text-base"
+          className="mb-4 w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
         />
 
         <label className="mb-1 block text-sm font-medium text-neutral-700">Contraseña</label>
@@ -32,7 +32,7 @@ export default async function LoginPage({
           type="password"
           name="password"
           required
-          className="mb-6 w-full rounded-md border border-neutral-300 px-3 py-2 text-base"
+          className="mb-6 w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
         />
 
         <button
