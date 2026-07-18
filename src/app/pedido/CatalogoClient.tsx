@@ -12,9 +12,11 @@ const AVISO_KEY = 'don_carmelo_aviso'
 export function CatalogoClient({
   productos,
   hayHistorial,
+  productosFrecuentes,
 }: {
   productos: Producto[]
   hayHistorial: boolean
+  productosFrecuentes: Producto[]
 }) {
   const router = useRouter()
   const [busqueda, setBusqueda] = useState('')
@@ -117,6 +119,30 @@ export function CatalogoClient({
           >
             {repitiendo ? 'Cargando...' : '↻ Repetir último pedido'}
           </button>
+        </div>
+      )}
+
+      {productosFrecuentes.length > 0 && (
+        <div className="px-4 pt-4">
+          <h2 className="mb-2 text-sm font-semibold text-neutral-700">Tus productos frecuentes</h2>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {productosFrecuentes.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => actualizarCantidad(p, cantidadEnCarrito(p.id) + 1)}
+                className="flex w-28 flex-shrink-0 flex-col items-center gap-1 rounded-lg border border-neutral-200 bg-white p-2 text-center"
+              >
+                {p.foto_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.foto_url} alt="" className="h-16 w-16 rounded-md object-cover" />
+                ) : (
+                  <div className="h-16 w-16 rounded-md bg-neutral-100" />
+                )}
+                <span className="text-xs font-medium text-neutral-900">{p.nombre}</span>
+                <span className="text-xs text-neutral-500">+ agregar</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

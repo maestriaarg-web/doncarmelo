@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/service'
 import { getPuntoVentaId } from '@/lib/comercio/session'
-import { tienePedidosPrevios } from '@/lib/comercio/pedidos'
+import { tienePedidosPrevios, obtenerProductosFrecuentes } from '@/lib/comercio/pedidos'
 import type { Producto } from '@/lib/types'
 import { CatalogoClient } from './CatalogoClient'
 
@@ -20,11 +20,14 @@ export default async function CatalogoPage() {
   if (error) throw new Error(error.message)
 
   const hayHistorial = puntoVentaId ? await tienePedidosPrevios(puntoVentaId) : false
+  const productosFrecuentes =
+    puntoVentaId && hayHistorial ? await obtenerProductosFrecuentes(puntoVentaId) : []
 
   return (
     <CatalogoClient
       productos={(productos ?? []) as Producto[]}
       hayHistorial={hayHistorial}
+      productosFrecuentes={productosFrecuentes}
     />
   )
 }
