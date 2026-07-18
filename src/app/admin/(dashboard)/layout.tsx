@@ -6,6 +6,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen bg-neutral-50">
       <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-4 py-3">
         <nav className="flex gap-4 text-sm font-medium text-neutral-700">
+          <Link href="/admin/pedidos">Pedidos</Link>
           <Link href="/admin/productos">Productos</Link>
           <Link href="/admin/puntos-venta">Puntos de venta</Link>
         </nav>
