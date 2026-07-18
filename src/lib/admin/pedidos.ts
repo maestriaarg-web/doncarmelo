@@ -100,19 +100,18 @@ async function obtenerPromedioHistorico(
  */
 export async function calcularCantidadesAtipicas(pedidos: PedidoAdmin[]): Promise<Set<string>> {
   const atipicos = new Set<string>()
-  const promediosCache = new Map<string, number | null>()
 
+  // Sin cache por (puntoVenta, producto): cada pedido excluye SU PROPIO id de
+  // la consulta, así que dos pedidos del mismo día con el mismo comercio y
+  // producto necesitan cada uno su propio promedio (si uno reutilizara el
+  // promedio del otro, terminaría comparándose contra un promedio que lo
+  // incluye a él mismo).
   for (const pedido of pedidos) {
     const puntoVentaId = pedido.puntos_venta?.id
     if (!puntoVentaId) continue
 
     for (const item of pedido.pedido_items) {
-      const cacheKey = `${puntoVentaId}:${item.producto_id}`
-      let promedio = promediosCache.get(cacheKey)
-      if (promedio === undefined) {
-        promedio = await obtenerPromedioHistorico(puntoVentaId, item.producto_id, pedido.id)
-        promediosCache.set(cacheKey, promedio)
-      }
+      const promedio = await obtenerPromedioHistorico(puntoVentaId, item.producto_id, pedido.id)
       if (promedio != null && item.cantidad > promedio * 2) {
         atipicos.add(`${pedido.id}:${item.producto_id}`)
       }
