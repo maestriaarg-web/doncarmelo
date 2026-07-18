@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { obtenerFechaHoyYManana } from '@/lib/comercio/corte'
-import { obtenerPedidosDelDia } from '@/lib/admin/pedidos'
+import { obtenerPedidosDelDia, calcularCantidadesAtipicas } from '@/lib/admin/pedidos'
 import { TurnoSection } from './TurnoSection'
 
 function sumarDias(fechaYYYYMMDD: string, dias: number): string {
@@ -21,6 +21,7 @@ export default async function PedidosPage({
   const pedidos = await obtenerPedidosDelDia(fecha)
   const pedidosManana = pedidos.filter((p) => p.turno_reparto === 'manana')
   const pedidosTarde = pedidos.filter((p) => p.turno_reparto === 'tarde')
+  const atipicos = await calcularCantidadesAtipicas(pedidos)
 
   return (
     <div>
@@ -43,8 +44,8 @@ export default async function PedidosPage({
         </div>
       </div>
 
-      <TurnoSection titulo="Turno mañana" pedidos={pedidosManana} />
-      <TurnoSection titulo="Turno tarde" pedidos={pedidosTarde} />
+      <TurnoSection titulo="Turno mañana" pedidos={pedidosManana} atipicos={atipicos} />
+      <TurnoSection titulo="Turno tarde" pedidos={pedidosTarde} atipicos={atipicos} />
     </div>
   )
 }
