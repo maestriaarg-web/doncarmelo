@@ -1,5 +1,15 @@
 import type { PedidoAdmin } from '@/lib/types'
-import { consolidarPreparacion } from '@/lib/admin/pedidos'
+import { consolidarPreparacion, type ItemPreparacion } from '@/lib/admin/pedidos'
+
+function agruparPorCategoria(items: ItemPreparacion[]): [string, ItemPreparacion[]][] {
+  const mapa = new Map<string, ItemPreparacion[]>()
+  for (const item of items) {
+    const lista = mapa.get(item.categoria) ?? []
+    lista.push(item)
+    mapa.set(item.categoria, lista)
+  }
+  return Array.from(mapa.entries())
+}
 
 export function TurnoSection({
   titulo,
@@ -15,6 +25,7 @@ export function TurnoSection({
   atipicos: Set<string>
 }) {
   const preparacion = consolidarPreparacion(pedidos)
+  const preparacionPorCategoria = agruparPorCategoria(preparacion)
 
   return (
     <section className="mb-8">
@@ -40,16 +51,25 @@ export function TurnoSection({
             <h3 className="mb-2 text-sm font-semibold text-neutral-700">
               Lista de preparación consolidada
             </h3>
-            <ul className="space-y-1 text-sm">
-              {preparacion.map((item) => (
-                <li key={item.productoId} className="flex justify-between">
-                  <span>{item.nombre}</span>
-                  <span className="text-neutral-500">
-                    {item.cantidadTotal} {item.unidad} ({item.cantidadPedidos} pedido(s))
-                  </span>
-                </li>
+            <div className="space-y-3 text-sm">
+              {preparacionPorCategoria.map(([categoria, items]) => (
+                <div key={categoria}>
+                  <p className="mb-1 text-xs font-semibold uppercase text-neutral-400">
+                    {categoria}
+                  </p>
+                  <ul className="space-y-1">
+                    {items.map((item) => (
+                      <li key={item.productoId} className="flex justify-between">
+                        <span>{item.nombre}</span>
+                        <span className="text-neutral-500">
+                          {item.cantidadTotal} {item.unidad} ({item.cantidadPedidos} pedido(s))
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
           <ul className="space-y-2">

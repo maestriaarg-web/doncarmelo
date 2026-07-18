@@ -14,7 +14,7 @@ export async function signIn(formData: FormData) {
     redirect(`/admin/login?error=${encodeURIComponent(error.message)}`)
   }
 
-  redirect('/admin/productos')
+  redirect('/admin/pedidos')
 }
 
 export async function signOut() {

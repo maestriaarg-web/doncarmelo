@@ -51,7 +51,7 @@ export async function proxy(request: NextRequest) {
 
   if (isLoginPage && user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/admin/productos'
+    url.pathname = '/admin/pedidos'
     return NextResponse.redirect(url)
   }
 

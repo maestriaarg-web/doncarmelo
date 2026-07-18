@@ -18,8 +18,11 @@ export default async function RemitosDelTurnoPage({
 
   return (
     <div className="bg-white">
-      {delTurno.map((pedido) => (
-        <div key={pedido.id} className="break-after-page">
+      {delTurno.map((pedido, index) => (
+        <div
+          key={pedido.id}
+          className={index < delTurno.length - 1 ? 'break-after-page' : undefined}
+        >
           <RemitoContent pedido={pedido} />
         </div>
       ))}
