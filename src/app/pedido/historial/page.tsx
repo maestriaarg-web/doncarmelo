@@ -9,6 +9,13 @@ const ETIQUETA_LABEL: Record<'grande' | 'chica' | 'ambas', string> = {
   ambas: 'Ambas',
 }
 
+const ESTADO_LABEL: Record<string, string> = {
+  confirmado: 'Confirmado',
+  preparado: 'En preparación',
+  entregado: 'Entregado',
+  cancelado: 'Cancelado',
+}
+
 export const dynamic = 'force-dynamic'
 
 export default async function HistorialPage() {
@@ -45,7 +52,8 @@ export default async function HistorialPage() {
               <div className="flex items-center justify-between">
                 <p className="font-medium text-foreground">{pedido.fecha_entrega}</p>
                 <span className="text-sm text-neutral-500">
-                  {pedido.turno_reparto === 'manana' ? 'Mañana' : 'Tarde'} · {pedido.estado}
+                  {pedido.turno_reparto === 'manana' ? 'Mañana' : 'Tarde'} ·{' '}
+                  {ESTADO_LABEL[pedido.estado] ?? pedido.estado}
                 </span>
               </div>
               <p className="mt-1 text-sm text-neutral-600">
