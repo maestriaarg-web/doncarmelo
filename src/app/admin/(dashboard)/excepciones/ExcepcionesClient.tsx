@@ -55,10 +55,10 @@ export function ExcepcionesClient({ excepciones }: { excepciones: ExcepcionCorte
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-neutral-900">Excepciones de corte</h1>
+        <h1 className="text-xl font-semibold text-foreground">Excepciones de corte</h1>
         <button
           onClick={() => setModo('nuevo')}
-          className="rounded-md bg-neutral-900 px-4 py-2.5 text-base font-medium text-white hover:bg-neutral-800"
+          className="rounded-md bg-primary px-4 py-2.5 text-base font-medium text-white hover:bg-primary-hover"
         >
           + Nueva excepción
         </button>
@@ -71,7 +71,7 @@ export function ExcepcionesClient({ excepciones }: { excepciones: ExcepcionCorte
             className="flex flex-wrap items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3"
           >
             <div className="min-w-[10rem] flex-1">
-              <p className="font-medium text-neutral-900">{excepcion.fecha}</p>
+              <p className="font-medium text-foreground">{excepcion.fecha}</p>
               <p className="text-sm text-neutral-500">
                 Corte: {excepcion.hora_corte}
                 {excepcion.motivo && ` · ${excepcion.motivo}`}
