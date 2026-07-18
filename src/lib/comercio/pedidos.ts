@@ -6,18 +6,23 @@ const SELECT_PEDIDO_CON_ITEMS =
 
 export async function obtenerHistorialPedidos(puntoVentaId: string): Promise<PedidoConItems[]> {
   const supabase = createServiceClient()
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('pedidos')
     .select(SELECT_PEDIDO_CON_ITEMS)
     .eq('punto_venta_id', puntoVentaId)
     .order('creado_en', { ascending: false })
+
+  // Un error acá NO debe verse como "todavía no hiciste ningún pedido" —
+  // eso sería mostrarle al comercio una mentira. Se deja que el error
+  // boundary de la página lo maneje en vez de devolver una lista vacía.
+  if (error) throw new Error(error.message)
 
   return (data ?? []) as unknown as PedidoConItems[]
 }
 
 export async function obtenerUltimoPedido(puntoVentaId: string): Promise<PedidoConItems | null> {
   const supabase = createServiceClient()
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('pedidos')
     .select(SELECT_PEDIDO_CON_ITEMS)
     .eq('punto_venta_id', puntoVentaId)
@@ -25,16 +30,27 @@ export async function obtenerUltimoPedido(puntoVentaId: string): Promise<PedidoC
     .limit(1)
     .maybeSingle()
 
+  if (error) throw new Error(error.message)
+
   return (data as unknown as PedidoConItems) ?? null
 }
 
 export async function tienePedidosPrevios(puntoVentaId: string): Promise<boolean> {
   const supabase = createServiceClient()
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('pedidos')
     .select('id')
     .eq('punto_venta_id', puntoVentaId)
     .limit(1)
+
+  if (error) {
+    // Esto solo controla si se muestran el botón "repetir" y la sección de
+    // frecuentes — un error acá no debe romper el catálogo. Se degrada a
+    // "sin historial" (los oculta), pero queda registrado para poder
+    // diagnosticarlo si empieza a pasar seguido.
+    console.error('tienePedidosPrevios: error consultando pedidos', error)
+    return false
+  }
 
   return (data?.length ?? 0) > 0
 }
@@ -50,10 +66,17 @@ export async function obtenerProductosFrecuentes(
 ): Promise<Producto[]> {
   const supabase = createServiceClient()
 
-  const { data: filas } = await supabase
+  const { data: filas, error: errorFilas } = await supabase
     .from('pedido_items')
     .select('producto_id, pedido_id, pedidos!inner(punto_venta_id)')
     .eq('pedidos.punto_venta_id', puntoVentaId)
+
+  if (errorFilas) {
+    // Igual que tienePedidosPrevios: es una sección de conveniencia, un
+    // error acá solo la oculta (no rompe el catálogo), pero se registra.
+    console.error('obtenerProductosFrecuentes: error consultando pedido_items', errorFilas)
+    return []
+  }
 
   if (!filas || filas.length === 0) return []
 
@@ -68,12 +91,17 @@ export async function obtenerProductosFrecuentes(
     .sort((a, b) => b[1].size - a[1].size)
     .map(([productoId]) => productoId)
 
-  const { data: productos } = await supabase
+  const { data: productos, error: errorProductos } = await supabase
     .from('productos')
     .select('*')
     .in('id', idsRankeados)
     .eq('activo', true)
     .eq('disponible', true)
+
+  if (errorProductos) {
+    console.error('obtenerProductosFrecuentes: error consultando productos', errorProductos)
+    return []
+  }
 
   if (!productos) return []
 

@@ -12,7 +12,12 @@ export async function repetirUltimoPedido(): Promise<RepetirPedidoResultado> {
   const puntoVentaId = await getPuntoVentaId()
   if (!puntoVentaId) return { error: 'Sesión inválida, volvé a ingresar tu celular.' }
 
-  const ultimoPedido = await obtenerUltimoPedido(puntoVentaId)
+  let ultimoPedido
+  try {
+    ultimoPedido = await obtenerUltimoPedido(puntoVentaId)
+  } catch {
+    return { error: 'No pudimos cargar tu último pedido. Intentá de nuevo.' }
+  }
   if (!ultimoPedido) return { error: 'Todavía no hiciste ningún pedido.' }
 
   const items: ItemCarrito[] = []
