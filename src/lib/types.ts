@@ -34,3 +34,23 @@ export type ItemCarrito = {
   precioSugerido: number | null
   cantidad: number
 }
+
+export type PedidoConItems = {
+  id: string
+  fecha_entrega: string
+  turno_reparto: 'manana' | 'tarde'
+  tipo_etiqueta: 'grande' | 'chica' | 'ambas'
+  estado: string
+  creado_en: string
+  pedido_items: {
+    cantidad: number
+    producto_id: string
+    productos: {
+      nombre: string
+      unidad: string
+      precio_sugerido: number | null
+      activo: boolean
+      disponible: boolean
+    } | null
+  }[]
+}
