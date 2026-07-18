@@ -1,3 +1,4 @@
+import { BrandMark } from '@/components/BrandMark'
 import { signIn } from './actions'
 
 export default async function LoginPage({
@@ -8,12 +9,15 @@ export default async function LoginPage({
   const { error } = await searchParams
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <form
         action={signIn}
         className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
       >
-        <h1 className="mb-6 text-xl font-semibold text-neutral-900">Panel Don Carmelo</h1>
+        <div className="mb-6">
+          <BrandMark />
+          <p className="mt-1 text-sm text-neutral-500">Panel de administración</p>
+        </div>
 
         {error && (
           <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
@@ -37,7 +41,7 @@ export default async function LoginPage({
 
         <button
           type="submit"
-          className="w-full rounded-md bg-neutral-900 px-4 py-2.5 text-base font-medium text-white hover:bg-neutral-800"
+          className="w-full rounded-md bg-primary px-4 py-2.5 text-base font-medium text-white hover:bg-primary-hover"
         >
           Ingresar
         </button>
