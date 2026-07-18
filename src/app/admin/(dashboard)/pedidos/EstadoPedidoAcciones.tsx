@@ -25,9 +25,14 @@ export function EstadoPedidoAcciones({
   async function ejecutar(accion: (id: string) => Promise<ActionResult>) {
     setCargando(true)
     setError(null)
-    const resultado = await accion(pedidoId)
-    if ('error' in resultado) setError(resultado.error)
-    setCargando(false)
+    try {
+      const resultado = await accion(pedidoId)
+      if ('error' in resultado) setError(resultado.error)
+    } catch {
+      setError('No pudimos actualizar el pedido. Intentá de nuevo.')
+    } finally {
+      setCargando(false)
+    }
   }
 
   function handleCancelar() {
