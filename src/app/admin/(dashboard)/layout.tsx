@@ -9,6 +9,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/admin/pedidos">Pedidos</Link>
           <Link href="/admin/productos">Productos</Link>
           <Link href="/admin/puntos-venta">Puntos de venta</Link>
+          <Link href="/admin/excepciones">Excepciones de corte</Link>
         </nav>
         <form action={signOut}>
           <button type="submit" className="text-sm text-neutral-500 hover:text-neutral-900">
