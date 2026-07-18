@@ -54,3 +54,35 @@ export type PedidoConItems = {
     } | null
   }[]
 }
+
+export type PedidoAdmin = {
+  id: string
+  fecha_entrega: string
+  turno_reparto: 'manana' | 'tarde'
+  tipo_etiqueta: 'grande' | 'chica' | 'ambas'
+  fuera_de_horario: boolean
+  creado_en: string
+  puntos_venta: {
+    id: string
+    nombre: string
+    direccion: string | null
+  } | null
+  pedido_items: {
+    id: string
+    cantidad: number
+    producto_id: string
+    productos: {
+      nombre: string
+      categoria: string
+      unidad: string
+    } | null
+  }[]
+}
+
+export type ExcepcionCorte = {
+  id: string
+  fecha: string
+  hora_corte: string
+  motivo: string | null
+  creado_en: string
+}
