@@ -3,8 +3,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { PuntoVenta, ItemCarrito } from '@/lib/types'
-import { calcularTurno, obtenerFechaHoyYManana } from '@/lib/comercio/corte'
+import {
+  calcularTurno,
+  obtenerFechaHoyYManana,
+  obtenerHoraCorteEfectiva,
+  formatearHoraArgentina,
+} from '@/lib/comercio/corte'
 import { confirmarPedido } from './actions'
+import { CorteBarra } from './CorteBarra'
 
 const CARRITO_KEY = 'don_carmelo_carrito'
 const ULTIMO_PEDIDO_KEY = 'don_carmelo_ultimo_pedido'
@@ -38,6 +44,7 @@ export function ConfirmarClient({
     }
     const avisoGuardado = sessionStorage.getItem(AVISO_KEY)
     if (avisoGuardado) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAviso(avisoGuardado)
       sessionStorage.removeItem(AVISO_KEY)
     }
@@ -67,6 +74,9 @@ export function ConfirmarClient({
   const hayItemsSinPrecio = carrito.some((i) => i.precioSugerido == null)
 
   const { hoy } = useMemo(() => obtenerFechaHoyYManana(new Date()), [])
+  const horaCorteHoy = useMemo(() => obtenerHoraCorteEfectiva(hoy, excepciones), [hoy, excepciones])
+  const horaActual = useMemo(() => formatearHoraArgentina(new Date()), [])
+
   const resultadoSiHoy = useMemo(
     () => calcularTurno('hoy', new Date(), excepciones),
     [excepciones]
@@ -190,10 +200,19 @@ export function ConfirmarClient({
           </button>
         </div>
         {yaCerroHoy && <p className="mt-2 text-sm text-neutral-500">Ya cerramos los pedidos de hoy.</p>}
-        <p className="mt-2 text-sm text-neutral-600">
-          Este pedido entra en el reparto de la{' '}
-          <strong>{previewTurno.turno === 'manana' ? 'MAÑANA' : 'TARDE'}</strong>.
-        </p>
+        {eleccionFecha === 'hoy' ? (
+          <div className="mt-3">
+            <CorteBarra horaCorteHoy={horaCorteHoy} horaActual={horaActual} />
+            <p className="mt-2 text-sm text-neutral-600">
+              Este pedido entra en el reparto de la{' '}
+              <strong>{previewTurno.turno === 'manana' ? 'MAÑANA' : 'TARDE'}</strong>.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-3 rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">
+            Este pedido entra en el reparto de la <strong>MAÑANA</strong>.
+          </div>
+        )}
       </div>
 
       <div>

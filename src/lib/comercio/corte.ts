@@ -1,6 +1,6 @@
 const TIMEZONE = 'America/Argentina/Buenos_Aires'
-const HORA_CORTE_DEFAULT = '09:00'
-const HORA_CIERRE_TARDE = '20:00'
+export const HORA_CORTE_DEFAULT = '09:00'
+export const HORA_CIERRE_TARDE = '20:00'
 
 export type ResultadoCorte = {
   fechaEntrega: string // YYYY-MM-DD
@@ -14,7 +14,7 @@ function formatearFechaArgentina(fecha: Date): string {
 
 // Devuelve siempre "HH:mm" (2 dígitos, cero a la izquierda) — la comparación
 // por string en calcularTurno depende de este formato fijo para ordenar bien.
-function formatearHoraArgentina(fecha: Date): string {
+export function formatearHoraArgentina(fecha: Date): string {
   return new Intl.DateTimeFormat('en-GB', {
     timeZone: TIMEZONE,
     hour: '2-digit',
@@ -35,6 +35,13 @@ export function obtenerFechaHoyYManana(ahora: Date): { hoy: string; manana: stri
   return { hoy, manana: sumarUnDia(hoy) }
 }
 
+export function obtenerHoraCorteEfectiva(
+  fecha: string,
+  excepciones: Record<string, string>
+): string {
+  return excepciones[fecha] ?? HORA_CORTE_DEFAULT
+}
+
 /**
  * Calcula el turno de reparto. `excepciones` es un mapa fecha (YYYY-MM-DD) -> hora_corte (HH:mm)
  * para las fechas relevantes (hoy y mañana) según lo que haya en `excepciones_corte`.
@@ -51,7 +58,7 @@ export function calcularTurno(
   }
 
   const horaActual = formatearHoraArgentina(ahora)
-  const horaCorteHoy = excepciones[hoy] ?? HORA_CORTE_DEFAULT
+  const horaCorteHoy = obtenerHoraCorteEfectiva(hoy, excepciones)
 
   if (horaActual < horaCorteHoy) {
     return { fechaEntrega: hoy, turno: 'manana', fueraDeHorario: false }
