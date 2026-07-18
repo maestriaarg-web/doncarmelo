@@ -60,6 +60,7 @@ export type PedidoAdmin = {
   fecha_entrega: string
   turno_reparto: 'manana' | 'tarde'
   tipo_etiqueta: 'grande' | 'chica' | 'ambas'
+  estado: 'confirmado' | 'preparado' | 'entregado' | 'cancelado'
   fuera_de_horario: boolean
   creado_en: string
   puntos_venta: {

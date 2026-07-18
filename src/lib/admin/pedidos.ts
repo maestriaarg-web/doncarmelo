@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { PedidoAdmin } from '@/lib/types'
 
 const SELECT_PEDIDO_ADMIN =
-  'id, fecha_entrega, turno_reparto, tipo_etiqueta, fuera_de_horario, creado_en, puntos_venta(id, nombre, direccion), pedido_items(id, cantidad, producto_id, productos(nombre, categoria, unidad))'
+  'id, fecha_entrega, turno_reparto, tipo_etiqueta, estado, fuera_de_horario, creado_en, puntos_venta(id, nombre, direccion), pedido_items(id, cantidad, producto_id, productos(nombre, categoria, unidad))'
 
 export async function obtenerPedidosDelDia(fecha: string): Promise<PedidoAdmin[]> {
   const supabase = await createClient()
@@ -40,11 +40,14 @@ export type ItemPreparacion = {
 /**
  * Suma las cantidades de cada producto entre todos los pedidos dados
  * (pensado para un turno completo), para armar la lista de preparación.
+ * Los pedidos cancelados no cuentan — no representan algo que preparar.
  */
 export function consolidarPreparacion(pedidos: PedidoAdmin[]): ItemPreparacion[] {
   const mapa = new Map<string, ItemPreparacion>()
 
   for (const pedido of pedidos) {
+    if (pedido.estado === 'cancelado') continue
+
     for (const item of pedido.pedido_items) {
       const producto = item.productos
       if (!producto) continue
@@ -71,6 +74,11 @@ export function consolidarPreparacion(pedidos: PedidoAdmin[]): ItemPreparacion[]
   )
 }
 
+/**
+ * Promedio histórico de cantidad para ese producto+comercio, excluyendo el
+ * pedido actual (nunca se compara un pedido contra sí mismo) y excluyendo
+ * cualquier pedido cancelado (no representa consumo real).
+ */
 async function obtenerPromedioHistorico(
   puntoVentaId: string,
   productoId: string,
@@ -79,10 +87,11 @@ async function obtenerPromedioHistorico(
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('pedido_items')
-    .select('cantidad, pedido_id, pedidos!inner(punto_venta_id)')
+    .select('cantidad, pedido_id, pedidos!inner(punto_venta_id, estado)')
     .eq('producto_id', productoId)
     .eq('pedidos.punto_venta_id', puntoVentaId)
     .neq('pedido_id', excluirPedidoId)
+    .neq('pedidos.estado', 'cancelado')
 
   if (error) throw new Error(error.message)
   if (!data || data.length === 0) return null
