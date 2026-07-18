@@ -44,7 +44,6 @@ export function ConfirmarClient({
     }
     const avisoGuardado = sessionStorage.getItem(AVISO_KEY)
     if (avisoGuardado) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAviso(avisoGuardado)
       sessionStorage.removeItem(AVISO_KEY)
     }
