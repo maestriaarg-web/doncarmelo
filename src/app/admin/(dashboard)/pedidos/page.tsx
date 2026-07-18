@@ -44,8 +44,8 @@ export default async function PedidosPage({
         </div>
       </div>
 
-      <TurnoSection titulo="Turno mañana" pedidos={pedidosManana} atipicos={atipicos} />
-      <TurnoSection titulo="Turno tarde" pedidos={pedidosTarde} atipicos={atipicos} />
+      <TurnoSection titulo="Turno mañana" fecha={fecha} turno="manana" pedidos={pedidosManana} atipicos={atipicos} />
+      <TurnoSection titulo="Turno tarde" fecha={fecha} turno="tarde" pedidos={pedidosTarde} atipicos={atipicos} />
     </div>
   )
 }
