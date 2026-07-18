@@ -25,12 +25,12 @@ export default async function AccesoPage({
   const { error } = await searchParams
 
   return (
-    <main className="flex min-h-screen flex-1 items-center justify-center bg-neutral-50 px-4">
+    <main className="flex min-h-screen flex-1 items-center justify-center bg-background px-4">
       <form
         action={ingresarConCelular}
         className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
       >
-        <h1 className="mb-2 text-xl font-semibold text-neutral-900">Almacén Don Carmelo</h1>
+        <h1 className="mb-2 text-xl font-semibold text-foreground">Almacén Don Carmelo</h1>
         <p className="mb-6 text-sm text-neutral-500">
           Ingresá tu número de celular para hacer tu pedido.
         </p>
@@ -50,7 +50,7 @@ export default async function AccesoPage({
 
         <button
           type="submit"
-          className="w-full rounded-md bg-neutral-900 px-4 py-3 text-base font-medium text-white hover:bg-neutral-800"
+          className="w-full rounded-md bg-primary px-4 py-3 text-base font-medium text-white hover:bg-primary-hover"
         >
           Ingresar
         </button>

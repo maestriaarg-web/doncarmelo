@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Producto, ItemCarrito } from '@/lib/types'
+import { BrandMark } from '@/components/BrandMark'
 import { repetirUltimoPedido } from './actions'
 
 const CARRITO_KEY = 'don_carmelo_carrito'
@@ -104,7 +105,8 @@ export function CatalogoClient({
 
   return (
     <div className="pb-24">
-      <div className="flex justify-end px-4 pt-3">
+      <div className="flex items-center justify-between px-4 pt-3">
+        <BrandMark />
         <Link href="/pedido/historial" className="text-sm font-medium text-neutral-600">
           Ver historial de pedidos →
         </Link>
@@ -138,7 +140,7 @@ export function CatalogoClient({
                 ) : (
                   <div className="h-16 w-16 rounded-md bg-neutral-100" />
                 )}
-                <span className="text-xs font-medium text-neutral-900">{p.nombre}</span>
+                <span className="text-xs font-medium text-foreground">{p.nombre}</span>
                 <span className="text-xs text-neutral-500">+ agregar</span>
               </button>
             ))}
@@ -146,7 +148,7 @@ export function CatalogoClient({
         </div>
       )}
 
-      <div className="sticky top-0 z-10 bg-neutral-50 px-4 pb-3 pt-2">
+      <div className="sticky top-0 z-10 bg-background px-4 pb-3 pt-2">
         <input
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
@@ -158,7 +160,7 @@ export function CatalogoClient({
       <div className="px-4">
         {categorias.map(([categoria, items]) => (
           <section key={categoria} className="mb-6">
-            <h2 className="mb-2 text-lg font-semibold text-neutral-900">{categoria}</h2>
+            <h2 className="mb-2 text-lg font-semibold text-foreground">{categoria}</h2>
             <ul className="space-y-2">
               {items.map((p) => (
                 <li
@@ -175,7 +177,7 @@ export function CatalogoClient({
                   )}
                   <div className="min-w-[8rem] flex-1">
                     <p
-                      className={`font-medium text-neutral-900 ${
+                      className={`font-medium text-foreground ${
                         !p.disponible ? 'line-through' : ''
                       }`}
                     >
@@ -213,7 +215,7 @@ export function CatalogoClient({
       {totalItems > 0 && (
         <button
           onClick={() => router.push('/pedido/confirmar')}
-          className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between bg-neutral-900 px-4 py-4 text-base font-medium text-white"
+          className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between bg-primary px-4 py-4 text-base font-medium text-white"
         >
           <span>
             🛒 {totalItems} producto(s) · ${totalPrecio.toFixed(2)}
