@@ -75,10 +75,10 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-neutral-900">Productos</h1>
+        <h1 className="text-xl font-semibold text-foreground">Productos</h1>
         <button
           onClick={() => setModo('nuevo')}
-          className="rounded-md bg-neutral-900 px-4 py-2.5 text-base font-medium text-white hover:bg-neutral-800"
+          className="rounded-md bg-primary px-4 py-2.5 text-base font-medium text-white hover:bg-primary-hover"
         >
           + Nuevo producto
         </button>
@@ -89,7 +89,7 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
           <button
             onClick={() => setFiltroCategoria('todas')}
             className={`whitespace-nowrap rounded-full px-3 py-1.5 text-sm ${
-              filtroCategoria === 'todas' ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-700'
+              filtroCategoria === 'todas' ? 'bg-primary text-white' : 'bg-neutral-200 text-neutral-700'
             }`}
           >
             Todas
@@ -99,7 +99,7 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
               key={c}
               onClick={() => setFiltroCategoria(c)}
               className={`whitespace-nowrap rounded-full px-3 py-1.5 text-sm ${
-                filtroCategoria === c ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-700'
+                filtroCategoria === c ? 'bg-primary text-white' : 'bg-neutral-200 text-neutral-700'
               }`}
             >
               {c}
@@ -121,7 +121,7 @@ export function ProductosClient({ productos }: { productos: Producto[] }) {
               <div className="h-12 w-12 rounded-md bg-neutral-100" />
             )}
             <div className="min-w-[10rem] flex-1">
-              <p className="font-medium text-neutral-900">
+              <p className="font-medium text-foreground">
                 {p.nombre} {p.congelado && <span className="text-xs text-blue-600">❄ congelado</span>}
               </p>
               <p className="text-sm text-neutral-500">
