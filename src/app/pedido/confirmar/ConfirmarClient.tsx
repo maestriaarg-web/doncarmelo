@@ -132,7 +132,7 @@ export function ConfirmarClient({
         <p className="mb-4 text-neutral-500">Tu carrito está vacío.</p>
         <button
           onClick={() => router.push('/pedido')}
-          className="rounded-md bg-neutral-900 px-4 py-2.5 text-base font-medium text-white"
+          className="rounded-md bg-primary px-4 py-2.5 text-base font-medium text-white"
         >
           Volver al catálogo
         </button>
@@ -142,7 +142,7 @@ export function ConfirmarClient({
 
   return (
     <div className="space-y-6 p-4 pb-32">
-      <h1 className="text-xl font-semibold text-neutral-900">Confirmar pedido</h1>
+      <h1 className="text-xl font-semibold text-foreground">Confirmar pedido</h1>
 
       {aviso && <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800">{aviso}</p>}
 
@@ -153,7 +153,7 @@ export function ConfirmarClient({
             className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3"
           >
             <div className="min-w-[8rem] flex-1">
-              <p className="font-medium text-neutral-900">{item.nombre}</p>
+              <p className="font-medium text-foreground">{item.nombre}</p>
               <p className="text-sm text-neutral-500">
                 {item.unidad}
                 {item.precioSugerido != null && ` · $${item.precioSugerido}`}
@@ -184,7 +184,7 @@ export function ConfirmarClient({
             onClick={() => setEleccionFecha('hoy')}
             disabled={yaCerroHoy}
             className={`flex-1 rounded-md px-4 py-3 text-base font-medium disabled:opacity-40 ${
-              eleccionFecha === 'hoy' ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-700'
+              eleccionFecha === 'hoy' ? 'bg-primary text-white' : 'bg-neutral-200 text-neutral-700'
             }`}
           >
             Hoy
@@ -192,7 +192,7 @@ export function ConfirmarClient({
           <button
             onClick={() => setEleccionFecha('manana')}
             className={`flex-1 rounded-md px-4 py-3 text-base font-medium ${
-              eleccionFecha === 'manana' ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-700'
+              eleccionFecha === 'manana' ? 'bg-primary text-white' : 'bg-neutral-200 text-neutral-700'
             }`}
           >
             Mañana
@@ -228,7 +228,7 @@ export function ConfirmarClient({
       </div>
 
       <div className="rounded-lg border border-neutral-200 bg-white p-3">
-        <p className="text-lg font-semibold text-neutral-900">Total: ${totalConPrecio.toFixed(2)}</p>
+        <p className="text-lg font-semibold text-foreground">Total: ${totalConPrecio.toFixed(2)}</p>
         {hayItemsSinPrecio && (
           <p className="mt-1 text-sm text-neutral-500">
             Algunos productos no tienen precio cargado, no se cuentan en este total.
@@ -246,7 +246,7 @@ export function ConfirmarClient({
       <button
         onClick={handleConfirmar}
         disabled={enviando || !llegaAlMinimo}
-        className="fixed inset-x-0 bottom-0 z-20 bg-neutral-900 px-4 py-4 text-center text-base font-medium text-white disabled:opacity-50"
+        className="fixed inset-x-0 bottom-0 z-20 bg-primary px-4 py-4 text-center text-base font-medium text-white disabled:opacity-50"
       >
         {enviando ? 'Confirmando...' : 'Confirmar pedido'}
       </button>

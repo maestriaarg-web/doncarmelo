@@ -47,7 +47,7 @@ export default function ListoPage() {
         <p className="text-neutral-500">No encontramos un pedido reciente.</p>
         <button
           onClick={() => router.push('/pedido')}
-          className="rounded-md bg-neutral-900 px-4 py-2.5 text-base font-medium text-white"
+          className="rounded-md bg-primary px-4 py-2.5 text-base font-medium text-white"
         >
           Ir al catálogo
         </button>
@@ -56,17 +56,17 @@ export default function ListoPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-neutral-50 p-4 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background p-4 text-center">
       <div className="text-5xl">✅</div>
-      <h1 className="text-2xl font-bold text-neutral-900">¡Pedido confirmado!</h1>
+      <h1 className="text-2xl font-bold text-foreground">¡Pedido confirmado!</h1>
       <div className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-4 text-left">
-        <p className="mb-1 text-base text-neutral-900">
+        <p className="mb-1 text-base text-foreground">
           <strong>Fecha de entrega:</strong> {resumen.fechaEntrega}
         </p>
-        <p className="mb-1 text-base text-neutral-900">
+        <p className="mb-1 text-base text-foreground">
           <strong>Reparto:</strong> {resumen.turno === 'manana' ? 'Mañana' : 'Tarde'}
         </p>
-        <p className="mb-3 text-base text-neutral-900">
+        <p className="mb-3 text-base text-foreground">
           <strong>Etiqueta:</strong> {ETIQUETA_LABEL[resumen.tipoEtiqueta]}
         </p>
         <ul className="space-y-1 text-sm text-neutral-600">
@@ -79,7 +79,7 @@ export default function ListoPage() {
       </div>
       <button
         onClick={() => router.push('/pedido')}
-        className="rounded-md bg-neutral-900 px-6 py-3 text-base font-medium text-white hover:bg-neutral-800"
+        className="rounded-md bg-primary px-6 py-3 text-base font-medium text-white hover:bg-primary-hover"
       >
         Hacer otro pedido
       </button>

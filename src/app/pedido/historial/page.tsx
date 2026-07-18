@@ -20,7 +20,7 @@ export default async function HistorialPage() {
   return (
     <div className="p-4 pb-8">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-neutral-900">Historial de pedidos</h1>
+        <h1 className="text-xl font-semibold text-foreground">Historial de pedidos</h1>
         <Link href="/pedido" className="text-sm font-medium text-neutral-600">
           ← Volver al catálogo
         </Link>
@@ -43,7 +43,7 @@ export default async function HistorialPage() {
           return (
             <li key={pedido.id} className="rounded-lg border border-neutral-200 bg-white p-3">
               <div className="flex items-center justify-between">
-                <p className="font-medium text-neutral-900">{pedido.fecha_entrega}</p>
+                <p className="font-medium text-foreground">{pedido.fecha_entrega}</p>
                 <span className="text-sm text-neutral-500">
                   {pedido.turno_reparto === 'manana' ? 'Mañana' : 'Tarde'} · {pedido.estado}
                 </span>

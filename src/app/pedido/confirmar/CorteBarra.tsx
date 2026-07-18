@@ -34,7 +34,7 @@ export function CorteBarra({
         }}
       >
         <div
-          className="absolute top-[-6px] h-7 w-0.5 bg-neutral-900"
+          className="absolute top-[-6px] h-7 w-0.5 bg-foreground"
           style={{ left: `${pctActual}%` }}
         />
       </div>
