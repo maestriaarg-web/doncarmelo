@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import type { Producto, ItemCarrito } from '@/lib/types'
 
 const CARRITO_KEY = 'don_carmelo_carrito'
@@ -76,7 +77,13 @@ export function CatalogoClient({ productos }: { productos: Producto[] }) {
 
   return (
     <div className="pb-24">
-      <div className="sticky top-0 z-10 bg-neutral-50 px-4 pb-3 pt-4">
+      <div className="flex justify-end px-4 pt-3">
+        <Link href="/pedido/historial" className="text-sm font-medium text-neutral-600">
+          Ver historial de pedidos →
+        </Link>
+      </div>
+
+      <div className="sticky top-0 z-10 bg-neutral-50 px-4 pb-3 pt-2">
         <input
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
