@@ -1,5 +1,6 @@
 import type { PedidoAdmin } from '@/lib/types'
 import { consolidarPreparacion, type ItemPreparacion } from '@/lib/admin/pedidos'
+import { EstadoPedidoAcciones } from './EstadoPedidoAcciones'
 
 function agruparPorCategoria(items: ItemPreparacion[]): [string, ItemPreparacion[]][] {
   const mapa = new Map<string, ItemPreparacion[]>()
@@ -105,6 +106,7 @@ export function TurnoSection({
                     )
                   })}
                 </ul>
+                <EstadoPedidoAcciones pedidoId={pedido.id} estado={pedido.estado} />
               </li>
             ))}
           </ul>
