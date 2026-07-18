@@ -1,14 +1,14 @@
 import { createServiceClient } from '@/lib/supabase/service'
+import { getPuntoVentaId } from '@/lib/comercio/session'
+import { tienePedidosPrevios } from '@/lib/comercio/pedidos'
 import type { Producto } from '@/lib/types'
 import { CatalogoClient } from './CatalogoClient'
 
-// createServiceClient() doesn't touch cookies(), so Next has no signal to render
-// this dynamically and would otherwise statically freeze the catalog (including
-// disponible status) at build time. Force per-request rendering so stock changes
-// show up on refresh, as required by the manual verification steps.
 export const dynamic = 'force-dynamic'
 
 export default async function CatalogoPage() {
+  const puntoVentaId = await getPuntoVentaId()
+
   const supabase = createServiceClient()
   const { data: productos, error } = await supabase
     .from('productos')
@@ -19,5 +19,12 @@ export default async function CatalogoPage() {
 
   if (error) throw new Error(error.message)
 
-  return <CatalogoClient productos={(productos ?? []) as Producto[]} />
+  const hayHistorial = puntoVentaId ? await tienePedidosPrevios(puntoVentaId) : false
+
+  return (
+    <CatalogoClient
+      productos={(productos ?? []) as Producto[]}
+      hayHistorial={hayHistorial}
+    />
+  )
 }

@@ -4,21 +4,28 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Producto, ItemCarrito } from '@/lib/types'
+import { repetirUltimoPedido } from './actions'
 
 const CARRITO_KEY = 'don_carmelo_carrito'
+const AVISO_KEY = 'don_carmelo_aviso'
 
-export function CatalogoClient({ productos }: { productos: Producto[] }) {
+export function CatalogoClient({
+  productos,
+  hayHistorial,
+}: {
+  productos: Producto[]
+  hayHistorial: boolean
+}) {
   const router = useRouter()
   const [busqueda, setBusqueda] = useState('')
   const [carrito, setCarrito] = useState<ItemCarrito[]>([])
   const [cargado, setCargado] = useState(false)
+  const [repitiendo, setRepitiendo] = useState(false)
 
   useEffect(() => {
     const guardado = sessionStorage.getItem(CARRITO_KEY)
     if (guardado) {
       try {
-        // Hydrating client-only sessionStorage into state on mount; must run in an
-        // effect to avoid SSR mismatch (sessionStorage is unavailable during SSR).
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCarrito(JSON.parse(guardado))
       } catch {
@@ -69,6 +76,24 @@ export function CatalogoClient({ productos }: { productos: Producto[] }) {
     })
   }
 
+  async function handleRepetirPedido() {
+    setRepitiendo(true)
+    const resultado = await repetirUltimoPedido()
+    if ('error' in resultado) {
+      alert(resultado.error)
+      setRepitiendo(false)
+      return
+    }
+    sessionStorage.setItem(CARRITO_KEY, JSON.stringify(resultado.items))
+    if (resultado.omitidos > 0) {
+      sessionStorage.setItem(
+        AVISO_KEY,
+        `${resultado.omitidos} producto(s) de tu último pedido ya no están disponibles y no se agregaron.`
+      )
+    }
+    router.push('/pedido/confirmar')
+  }
+
   const totalItems = carrito.reduce((acc, i) => acc + i.cantidad, 0)
   const totalPrecio = carrito.reduce(
     (acc, i) => acc + (i.precioSugerido != null ? i.precioSugerido * i.cantidad : 0),
@@ -82,6 +107,18 @@ export function CatalogoClient({ productos }: { productos: Producto[] }) {
           Ver historial de pedidos →
         </Link>
       </div>
+
+      {hayHistorial && (
+        <div className="px-4 pt-3">
+          <button
+            onClick={handleRepetirPedido}
+            disabled={repitiendo}
+            className="w-full rounded-md bg-neutral-800 px-4 py-3 text-base font-medium text-white disabled:opacity-50"
+          >
+            {repitiendo ? 'Cargando...' : '↻ Repetir último pedido'}
+          </button>
+        </div>
+      )}
 
       <div className="sticky top-0 z-10 bg-neutral-50 px-4 pb-3 pt-2">
         <input

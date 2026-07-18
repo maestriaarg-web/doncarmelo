@@ -8,6 +8,7 @@ import { confirmarPedido } from './actions'
 
 const CARRITO_KEY = 'don_carmelo_carrito'
 const ULTIMO_PEDIDO_KEY = 'don_carmelo_ultimo_pedido'
+const AVISO_KEY = 'don_carmelo_aviso'
 
 export function ConfirmarClient({
   puntoVenta,
@@ -23,18 +24,23 @@ export function ConfirmarClient({
   const [tipoEtiqueta, setTipoEtiqueta] = useState(puntoVenta.etiqueta_default)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [aviso, setAviso] = useState<string | null>(null)
 
   useEffect(() => {
     const guardado = sessionStorage.getItem(CARRITO_KEY)
     if (guardado) {
       try {
-        // Hydrating client-only sessionStorage into state on mount; must run in an
-        // effect to avoid SSR mismatch (sessionStorage is unavailable during SSR).
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCarrito(JSON.parse(guardado))
       } catch {
         // carrito corrupto, se ignora
       }
+    }
+    const avisoGuardado = sessionStorage.getItem(AVISO_KEY)
+    if (avisoGuardado) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAviso(avisoGuardado)
+      sessionStorage.removeItem(AVISO_KEY)
     }
     setCargado(true)
   }, [])
@@ -69,9 +75,6 @@ export function ConfirmarClient({
   const yaCerroHoy = resultadoSiHoy.fechaEntrega !== hoy
 
   useEffect(() => {
-    // Auto-corrects the selection when "hoy" stops being a valid choice (e.g. the
-    // cutoff passes while the page is open); there's no non-effect way to react to
-    // that external clock-driven change.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (yaCerroHoy && eleccionFecha === 'hoy') setEleccionFecha('manana')
   }, [yaCerroHoy, eleccionFecha])
@@ -132,6 +135,8 @@ export function ConfirmarClient({
   return (
     <div className="space-y-6 p-4 pb-32">
       <h1 className="text-xl font-semibold text-neutral-900">Confirmar pedido</h1>
+
+      {aviso && <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800">{aviso}</p>}
 
       <ul className="space-y-2">
         {carrito.map((item) => (
