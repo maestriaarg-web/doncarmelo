@@ -30,7 +30,7 @@ export function TurnoSection({
   return (
     <section className="mb-8">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-neutral-900">{titulo}</h2>
+        <h2 className="text-lg font-semibold text-foreground">{titulo}</h2>
         {pedidos.length > 0 && (
           <a
             href={`/admin/remitos?fecha=${fecha}&turno=${turno}`}
@@ -76,7 +76,7 @@ export function TurnoSection({
             {pedidos.map((pedido) => (
               <li key={pedido.id} className="rounded-lg border border-neutral-200 bg-white p-3">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium text-neutral-900">
+                  <p className="font-medium text-foreground">
                     {pedido.puntos_venta?.nombre ?? 'Punto de venta'}
                   </p>
                   <a

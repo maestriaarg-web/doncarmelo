@@ -26,7 +26,7 @@ export default async function PedidosPage({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-neutral-900">Pedidos</h1>
+        <h1 className="text-xl font-semibold text-foreground">Pedidos</h1>
         <div className="flex items-center gap-3">
           <Link
             href={`/admin/pedidos?fecha=${sumarDias(fecha, -1)}`}
@@ -34,7 +34,7 @@ export default async function PedidosPage({
           >
             ← Anterior
           </Link>
-          <span className="text-base font-medium text-neutral-900">{fecha}</span>
+          <span className="text-base font-medium text-foreground">{fecha}</span>
           <Link
             href={`/admin/pedidos?fecha=${sumarDias(fecha, 1)}`}
             className="rounded-md border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700"

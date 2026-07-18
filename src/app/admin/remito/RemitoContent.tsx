@@ -9,17 +9,17 @@ const ETIQUETA_LABEL: Record<PedidoAdmin['tipo_etiqueta'], string> = {
 export function RemitoContent({ pedido }: { pedido: PedidoAdmin }) {
   return (
     <div className="p-6">
-      <h2 className="text-lg font-bold text-neutral-900">
+      <h2 className="text-lg font-bold text-foreground">
         {pedido.puntos_venta?.nombre ?? 'Punto de venta'}
       </h2>
       {pedido.puntos_venta?.direccion && (
         <p className="text-sm text-neutral-600">{pedido.puntos_venta.direccion}</p>
       )}
-      <p className="mt-2 text-sm text-neutral-900">
+      <p className="mt-2 text-sm text-foreground">
         Fecha de entrega: <strong>{pedido.fecha_entrega}</strong> · Turno:{' '}
         <strong>{pedido.turno_reparto === 'manana' ? 'Mañana' : 'Tarde'}</strong>
       </p>
-      <p className="text-sm text-neutral-900">
+      <p className="text-sm text-foreground">
         Etiqueta: <strong>{ETIQUETA_LABEL[pedido.tipo_etiqueta]}</strong>
       </p>
       <table className="mt-4 w-full text-sm">
