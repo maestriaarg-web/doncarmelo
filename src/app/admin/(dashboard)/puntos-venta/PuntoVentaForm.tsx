@@ -136,7 +136,7 @@ export function PuntoVentaForm({
         <button
           type="submit"
           disabled={guardando}
-          className="rounded-md bg-neutral-900 px-4 py-2.5 text-base font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+          className="rounded-md bg-primary px-4 py-2.5 text-base font-medium text-white hover:bg-primary-hover disabled:opacity-50"
         >
           {guardando ? 'Guardando...' : 'Guardar'}
         </button>
