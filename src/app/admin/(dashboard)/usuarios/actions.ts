@@ -11,7 +11,20 @@ export type UsuarioInput = {
   rol: RolAdmin
 }
 
+// Server Actions se invocan por id de acción, no por ruta — proxy.ts protege
+// el RENDER de /admin/usuarios, pero no la ejecución de estas funciones si
+// alguien arma el request a mano. Por eso cada una valida el rol del que
+// llama por su cuenta, en vez de confiar únicamente en el proxy/nav.
+async function exigirAdmin(): Promise<{ userId: string } | { error: string }> {
+  const actual = await obtenerRolActual()
+  if (!actual || actual.rol !== 'admin') return { error: 'No autorizado.' }
+  return { userId: actual.userId }
+}
+
 export async function crearUsuario(input: UsuarioInput): Promise<ActionResult> {
+  const auth = await exigirAdmin()
+  if ('error' in auth) return auth
+
   const supabase = createServiceClient()
   const { error } = await supabase.auth.admin.createUser({
     email: input.email,
@@ -26,8 +39,9 @@ export async function crearUsuario(input: UsuarioInput): Promise<ActionResult> {
 }
 
 export async function cambiarRolUsuario(userId: string, rol: RolAdmin): Promise<ActionResult> {
-  const actual = await obtenerRolActual()
-  if (actual?.userId === userId) {
+  const auth = await exigirAdmin()
+  if ('error' in auth) return auth
+  if (auth.userId === userId) {
     return { error: 'No podés cambiar tu propio rol.' }
   }
 
@@ -42,6 +56,9 @@ export async function cambiarRolUsuario(userId: string, rol: RolAdmin): Promise<
 }
 
 export async function resetearPassword(userId: string, password: string): Promise<ActionResult> {
+  const auth = await exigirAdmin()
+  if ('error' in auth) return auth
+
   const supabase = createServiceClient()
   const { error } = await supabase.auth.admin.updateUserById(userId, { password })
 
@@ -50,8 +67,9 @@ export async function resetearPassword(userId: string, password: string): Promis
 }
 
 export async function eliminarUsuario(userId: string): Promise<ActionResult> {
-  const actual = await obtenerRolActual()
-  if (actual?.userId === userId) {
+  const auth = await exigirAdmin()
+  if ('error' in auth) return auth
+  if (auth.userId === userId) {
     return { error: 'No podés eliminarte a vos mismo.' }
   }
 
