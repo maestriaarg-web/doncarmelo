@@ -1,8 +1,12 @@
 import Link from 'next/link'
 import { BrandMark } from '@/components/BrandMark'
+import { obtenerRolActual } from '@/lib/admin/auth'
 import { signOut } from '../login/actions'
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const sesion = await obtenerRolActual()
+  const esAdmin = sesion?.rol !== 'empleado'
+
   return (
     <div className="min-h-screen bg-background">
       <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-4 py-3">
@@ -10,9 +14,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <BrandMark />
           <nav className="flex gap-4 text-sm font-medium text-neutral-700">
             <Link href="/admin/pedidos">Pedidos</Link>
-            <Link href="/admin/productos">Productos</Link>
-            <Link href="/admin/puntos-venta">Puntos de venta</Link>
-            <Link href="/admin/excepciones">Excepciones de corte</Link>
+            {esAdmin && (
+              <>
+                <Link href="/admin/productos">Productos</Link>
+                <Link href="/admin/puntos-venta">Puntos de venta</Link>
+                <Link href="/admin/excepciones">Excepciones de corte</Link>
+                <Link href="/admin/usuarios">Usuarios</Link>
+              </>
+            )}
           </nav>
         </div>
         <form action={signOut}>

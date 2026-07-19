@@ -87,3 +87,11 @@ export type ExcepcionCorte = {
   motivo: string | null
   creado_en: string
 }
+
+export type RolAdmin = 'admin' | 'empleado'
+
+export type UsuarioAdmin = {
+  id: string
+  email: string
+  rol: RolAdmin
+}

@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { COMERCIO_COOKIE_NAME } from '@/lib/comercio/constants'
 
+const RUTAS_PERMITIDAS_EMPLEADO = ['/admin/pedidos', '/admin/remito', '/admin/remitos']
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -50,6 +52,17 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isLoginPage && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin/pedidos'
+    return NextResponse.redirect(url)
+  }
+
+  const esEmpleado = user?.app_metadata?.rol === 'empleado'
+  const rutaPermitidaParaEmpleado = RUTAS_PERMITIDAS_EMPLEADO.some((ruta) =>
+    pathname.startsWith(ruta)
+  )
+
+  if (isAdminRoute && !isLoginPage && esEmpleado && !rutaPermitidaParaEmpleado) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin/pedidos'
     return NextResponse.redirect(url)
