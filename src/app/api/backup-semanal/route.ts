@@ -21,8 +21,16 @@ type PedidoConsulta = {
 }
 
 export async function GET(request: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET
+  if (!cronSecret) {
+    // Fail closed: sin CRON_SECRET configurado, "Bearer undefined" sería un
+    // valor adivinable que pasaría la comparación de abajo.
+    console.error('backup-semanal: falta CRON_SECRET en las variables de entorno')
+    return NextResponse.json({ error: 'Configuración incompleta.' }, { status: 500 })
+  }
+
   const auth = request.headers.get('authorization')
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (auth !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'No autorizado.' }, { status: 401 })
   }
 
