@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { notificarEstadoPedido } from '@/lib/whatsapp'
 import type { ActionResult } from '@/lib/types'
 
 export async function marcarPreparado(pedidoId: string): Promise<ActionResult> {
@@ -13,6 +14,7 @@ export async function marcarPreparado(pedidoId: string): Promise<ActionResult> {
 
   if (error) return { error: error.message }
   revalidatePath('/admin/pedidos')
+  await notificarEstadoPedido(pedidoId, 'preparado')
   return { success: true }
 }
 
@@ -25,6 +27,7 @@ export async function marcarEntregado(pedidoId: string): Promise<ActionResult> {
 
   if (error) return { error: error.message }
   revalidatePath('/admin/pedidos')
+  await notificarEstadoPedido(pedidoId, 'entregado')
   return { success: true }
 }
 
@@ -37,5 +40,6 @@ export async function cancelarPedido(pedidoId: string): Promise<ActionResult> {
 
   if (error) return { error: error.message }
   revalidatePath('/admin/pedidos')
+  await notificarEstadoPedido(pedidoId, 'cancelado')
   return { success: true }
 }

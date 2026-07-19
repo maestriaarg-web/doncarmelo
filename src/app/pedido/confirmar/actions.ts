@@ -3,6 +3,7 @@
 import { createServiceClient } from '@/lib/supabase/service'
 import { getPuntoVentaId } from '@/lib/comercio/session'
 import { calcularTurno, obtenerFechaHoyYManana } from '@/lib/comercio/corte'
+import { notificarEstadoPedido } from '@/lib/whatsapp'
 
 export type ConfirmarPedidoInput = {
   items: { productoId: string; cantidad: number }[]
@@ -124,6 +125,8 @@ export async function confirmarPedido(
       error: 'No pudimos guardar los productos del pedido. Intentá de nuevo.',
     }
   }
+
+  await notificarEstadoPedido(pedido.id, 'confirmado')
 
   return { success: true, fechaEntrega: resultado.fechaEntrega, turno: resultado.turno }
 }
