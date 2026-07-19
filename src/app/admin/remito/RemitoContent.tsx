@@ -15,6 +15,9 @@ export function RemitoContent({ pedido }: { pedido: PedidoAdmin }) {
       {pedido.puntos_venta?.direccion && (
         <p className="text-sm text-neutral-600">{pedido.puntos_venta.direccion}</p>
       )}
+      {pedido.puntos_venta?.zona && (
+        <p className="text-sm text-neutral-600">Zona: {pedido.puntos_venta.zona}</p>
+      )}
       <p className="mt-2 text-sm text-foreground">
         Fecha de entrega: <strong>{pedido.fecha_entrega}</strong> · Turno:{' '}
         <strong>{pedido.turno_reparto === 'manana' ? 'Mañana' : 'Tarde'}</strong>
