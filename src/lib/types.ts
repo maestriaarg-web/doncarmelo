@@ -21,6 +21,7 @@ export type PuntoVenta = {
   direccion: string | null
   contacto: string | null
   celular: string
+  zona: string | null
   etiqueta_default: 'grande' | 'chica' | 'ambas'
   pedido_minimo: number | null
   activo: boolean
@@ -67,6 +68,7 @@ export type PedidoAdmin = {
     id: string
     nombre: string
     direccion: string | null
+    zona: string | null
   } | null
   pedido_items: {
     id: string

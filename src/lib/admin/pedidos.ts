@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { PedidoAdmin } from '@/lib/types'
 
 const SELECT_PEDIDO_ADMIN =
-  'id, fecha_entrega, turno_reparto, tipo_etiqueta, estado, fuera_de_horario, creado_en, puntos_venta(id, nombre, direccion), pedido_items(id, cantidad, producto_id, productos(nombre, categoria, unidad))'
+  'id, fecha_entrega, turno_reparto, tipo_etiqueta, estado, fuera_de_horario, creado_en, puntos_venta(id, nombre, direccion, zona), pedido_items(id, cantidad, producto_id, productos(nombre, categoria, unidad))'
 
 export async function obtenerPedidosDelDia(fecha: string): Promise<PedidoAdmin[]> {
   const supabase = await createClient()
