@@ -20,6 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <Link href="/admin/puntos-venta">Puntos de venta</Link>
                 <Link href="/admin/excepciones">Excepciones de corte</Link>
                 <Link href="/admin/usuarios">Usuarios</Link>
+                <Link href="/admin/configuracion">Configuración</Link>
               </>
             )}
           </nav>

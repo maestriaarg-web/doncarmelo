@@ -97,3 +97,8 @@ export type UsuarioAdmin = {
   email: string
   rol: RolAdmin
 }
+
+export type Configuracion = {
+  id: number
+  backup_email: string | null
+}
