@@ -54,33 +54,41 @@ async function enviarWhatsApp(numero: string, mensaje: string): Promise<void> {
  * (confirmar/marcar/cancelar un pedido) que la llamó.
  */
 export async function notificarEstadoPedido(pedidoId: string, estado: EstadoPedido): Promise<void> {
-  const supabase = createServiceClient()
-  const { data, error } = await supabase
-    .from('pedidos')
-    .select('fecha_entrega, turno_reparto, puntos_venta(celular)')
-    .eq('id', pedidoId)
-    .maybeSingle()
+  try {
+    // createServiceClient() puede tirar de forma sincrónica (ej. si falta una
+    // variable de entorno de Supabase) — con la función async, eso se
+    // convierte en una promesa rechazada. Todo el cuerpo va dentro del mismo
+    // try para que ese caso también quede cubierto por el "nunca lanza".
+    const supabase = createServiceClient()
+    const { data, error } = await supabase
+      .from('pedidos')
+      .select('fecha_entrega, turno_reparto, puntos_venta(celular)')
+      .eq('id', pedidoId)
+      .maybeSingle()
 
-  if (error || !data) {
-    console.error('notificarEstadoPedido: no se pudo encontrar el pedido', pedidoId, error)
-    return
+    if (error || !data) {
+      console.error('notificarEstadoPedido: no se pudo encontrar el pedido', pedidoId, error)
+      return
+    }
+
+    const pedido = data as unknown as {
+      fecha_entrega: string
+      turno_reparto: 'manana' | 'tarde'
+      puntos_venta: { celular: string } | null
+    }
+
+    const celular = pedido.puntos_venta?.celular
+    if (!celular) {
+      console.error('notificarEstadoPedido: el punto de venta no tiene celular cargado', pedidoId)
+      return
+    }
+
+    const turnoLabel = pedido.turno_reparto === 'manana' ? 'mañana' : 'tarde'
+    const mensaje = MENSAJE_POR_ESTADO[estado](pedido.fecha_entrega, turnoLabel)
+    const numero = `+549${celular}`
+
+    await enviarWhatsApp(numero, mensaje)
+  } catch (err) {
+    console.error('notificarEstadoPedido: error inesperado', pedidoId, err)
   }
-
-  const pedido = data as unknown as {
-    fecha_entrega: string
-    turno_reparto: 'manana' | 'tarde'
-    puntos_venta: { celular: string } | null
-  }
-
-  const celular = pedido.puntos_venta?.celular
-  if (!celular) {
-    console.error('notificarEstadoPedido: el punto de venta no tiene celular cargado', pedidoId)
-    return
-  }
-
-  const turnoLabel = pedido.turno_reparto === 'manana' ? 'mañana' : 'tarde'
-  const mensaje = MENSAJE_POR_ESTADO[estado](pedido.fecha_entrega, turnoLabel)
-  const numero = `+549${celular}`
-
-  await enviarWhatsApp(numero, mensaje)
 }
