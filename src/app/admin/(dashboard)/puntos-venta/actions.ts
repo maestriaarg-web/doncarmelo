@@ -9,6 +9,7 @@ export type PuntoVentaInput = {
   direccion: string | null
   contacto: string | null
   celular: string
+  zona: string | null
   etiqueta_default: 'grande' | 'chica' | 'ambas'
   pedido_minimo: number | null
 }

@@ -6,10 +6,12 @@ import type { PuntoVentaInput } from './actions'
 
 export function PuntoVentaForm({
   puntoVenta,
+  zonasExistentes,
   onSubmit,
   onCancel,
 }: {
   puntoVenta?: PuntoVenta
+  zonasExistentes: string[]
   onSubmit: (input: PuntoVentaInput) => Promise<ActionResult>
   onCancel: () => void
 }) {
@@ -17,6 +19,7 @@ export function PuntoVentaForm({
   const [direccion, setDireccion] = useState(puntoVenta?.direccion ?? '')
   const [contacto, setContacto] = useState(puntoVenta?.contacto ?? '')
   const [celular, setCelular] = useState(puntoVenta?.celular ?? '')
+  const [zona, setZona] = useState(puntoVenta?.zona ?? '')
   const [etiquetaDefault, setEtiquetaDefault] = useState<PuntoVentaInput['etiqueta_default']>(
     puntoVenta?.etiqueta_default ?? 'ambas'
   )
@@ -35,6 +38,7 @@ export function PuntoVentaForm({
       direccion: direccion || null,
       contacto: contacto || null,
       celular,
+      zona: zona || null,
       etiqueta_default: etiquetaDefault,
       pedido_minimo: pedidoMinimo ? Number(pedidoMinimo) : null,
     })
@@ -97,6 +101,25 @@ export function PuntoVentaForm({
         <p className="mt-1 text-sm text-neutral-500">
           Es el número que el comercio va a usar para entrar a hacer pedidos. Podés escribirlo con
           espacios o guiones, se guarda solo con los números.
+        </p>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-neutral-700">Zona de reparto</label>
+        <input
+          value={zona}
+          onChange={(e) => setZona(e.target.value)}
+          list="zonas-datalist"
+          placeholder="Opcional, para organizar el reparto"
+          className="w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
+        />
+        <datalist id="zonas-datalist">
+          {zonasExistentes.map((z) => (
+            <option key={z} value={z} />
+          ))}
+        </datalist>
+        <p className="mt-1 text-sm text-neutral-500">
+          Es interna, solo la ve el admin — sirve para agrupar los pedidos por recorrido de reparto.
         </p>
       </div>
 
