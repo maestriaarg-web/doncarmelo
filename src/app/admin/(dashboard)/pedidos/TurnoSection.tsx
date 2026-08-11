@@ -29,6 +29,20 @@ function agruparPedidosPorZona(pedidos: PedidoAdmin[]): [string, PedidoAdmin[]][
   })
 }
 
+/**
+ * Suma precio_sugerido × cantidad de los ítems del pedido que tienen precio
+ * cargado, como punto de partida para el monto final que se carga al marcar
+ * "Preparado". Si ningún ítem tiene precio, no hay nada que sugerir.
+ */
+function calcularMontoSugerido(pedido: PedidoAdmin): number | null {
+  const conPrecio = pedido.pedido_items.filter((item) => item.productos?.precio_sugerido != null)
+  if (conPrecio.length === 0) return null
+  return conPrecio.reduce(
+    (acc, item) => acc + (item.productos!.precio_sugerido as number) * item.cantidad,
+    0
+  )
+}
+
 export function TurnoSection({
   titulo,
   fecha,
@@ -128,7 +142,11 @@ export function TurnoSection({
                           )
                         })}
                       </ul>
-                      <EstadoPedidoAcciones pedidoId={pedido.id} estado={pedido.estado} />
+                      <EstadoPedidoAcciones
+                        pedidoId={pedido.id}
+                        estado={pedido.estado}
+                        montoSugerido={calcularMontoSugerido(pedido)}
+                      />
                     </li>
                   ))}
                 </ul>

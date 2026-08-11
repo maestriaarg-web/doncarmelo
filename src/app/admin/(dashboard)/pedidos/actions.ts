@@ -5,11 +5,15 @@ import { createClient } from '@/lib/supabase/server'
 import { notificarEstadoPedido } from '@/lib/whatsapp'
 import type { ActionResult } from '@/lib/types'
 
-export async function marcarPreparado(pedidoId: string): Promise<ActionResult> {
+export async function marcarPreparado(pedidoId: string, montoFinal: number): Promise<ActionResult> {
+  if (!Number.isFinite(montoFinal) || montoFinal <= 0) {
+    return { error: 'Ingresá un monto válido.' }
+  }
+
   const supabase = await createClient()
   const { error } = await supabase
     .from('pedidos')
-    .update({ estado: 'preparado' })
+    .update({ estado: 'preparado', monto_final: montoFinal })
     .eq('id', pedidoId)
 
   if (error) return { error: error.message }
