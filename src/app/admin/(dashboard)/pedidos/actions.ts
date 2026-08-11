@@ -15,6 +15,7 @@ export async function marcarPreparado(pedidoId: string, montoFinal: number): Pro
     .from('pedidos')
     .update({ estado: 'preparado', monto_final: montoFinal })
     .eq('id', pedidoId)
+    .eq('estado', 'confirmado')
 
   if (error) return { error: error.message }
   revalidatePath('/admin/pedidos')

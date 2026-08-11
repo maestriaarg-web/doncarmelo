@@ -37,10 +37,11 @@ function agruparPedidosPorZona(pedidos: PedidoAdmin[]): [string, PedidoAdmin[]][
 function calcularMontoSugerido(pedido: PedidoAdmin): number | null {
   const conPrecio = pedido.pedido_items.filter((item) => item.productos?.precio_sugerido != null)
   if (conPrecio.length === 0) return null
-  return conPrecio.reduce(
+  const total = conPrecio.reduce(
     (acc, item) => acc + (item.productos!.precio_sugerido as number) * item.cantidad,
     0
   )
+  return Math.round(total * 100) / 100
 }
 
 export function TurnoSection({
