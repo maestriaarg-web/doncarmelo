@@ -1,3 +1,4 @@
+// src/lib/types.ts
 // Server Actions must return errors (not throw) so the message survives
 // Next.js's production redaction of thrown Server Action errors.
 export type ActionResult = { error: string } | { success: true }
@@ -104,4 +105,6 @@ export type UsuarioAdmin = {
 export type Configuracion = {
   id: number
   backup_email: string | null
+  lista_precios_url: string | null
+  video_embalaje_url: string | null
 }
