@@ -20,6 +20,12 @@ export function extraerYoutubeEmbedUrl(url: string): string | null {
   const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/)
   if (embedMatch) return `https://www.youtube.com/embed/${embedMatch[1]}`
 
+  const shortsMatch = url.match(/\/shorts\/([a-zA-Z0-9_-]{11})/)
+  if (shortsMatch) return `https://www.youtube.com/embed/${shortsMatch[1]}`
+
+  const liveMatch = url.match(/\/live\/([a-zA-Z0-9_-]{11})/)
+  if (liveMatch) return `https://www.youtube.com/embed/${liveMatch[1]}`
+
   return null
 }
 

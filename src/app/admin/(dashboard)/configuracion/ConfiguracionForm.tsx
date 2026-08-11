@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import type { Configuracion } from '@/lib/types'
 import { actualizarConfiguracion } from './actions'
 
+const LISTA_PRECIOS_PATH = '0fff5c3f-7b04-4bef-89c6-67c29beeb86c/lista-precios.pdf'
+
 export function ConfiguracionForm({ configuracion }: { configuracion: Configuracion }) {
   const [backupEmail, setBackupEmail] = useState(configuracion.backup_email ?? '')
   const [listaPreciosUrl, setListaPreciosUrl] = useState(configuracion.lista_precios_url ?? '')
@@ -23,7 +25,7 @@ export function ConfiguracionForm({ configuracion }: { configuracion: Configurac
     setError(null)
     try {
       const supabase = createClient()
-      const path = 'lista-precios.pdf'
+      const path = LISTA_PRECIOS_PATH
       const { error: uploadError } = await supabase.storage
         .from('listas-precios')
         .upload(path, file, { upsert: true })
@@ -31,11 +33,12 @@ export function ConfiguracionForm({ configuracion }: { configuracion: Configurac
       if (uploadError) throw uploadError
 
       const { data } = supabase.storage.from('listas-precios').getPublicUrl(path)
-      setListaPreciosUrl(data.publicUrl)
+      setListaPreciosUrl(`${data.publicUrl}?v=${Date.now()}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al subir la lista de precios')
     } finally {
       setSubiendo(false)
+      e.target.value = ''
     }
   }
 
@@ -109,8 +112,8 @@ export function ConfiguracionForm({ configuracion }: { configuracion: Configurac
             </p>
           )}
           <p className="mt-1 text-sm text-neutral-500">
-            Los comercios ven un botón para descargar este archivo. Subir uno nuevo reemplaza al
-            anterior.
+            Los comercios ven un botón para descargar este archivo. Subir uno nuevo lo reemplaza
+            al instante, ni bien lo elegís (no hace falta tocar &quot;Guardar&quot; para eso).
           </p>
         </div>
         <div>
