@@ -2,10 +2,20 @@ import { createServiceClient } from '@/lib/supabase/service'
 
 type EstadoPedido = 'confirmado' | 'preparado' | 'entregado' | 'cancelado'
 
-const MENSAJE_POR_ESTADO: Record<EstadoPedido, (fecha: string, turno: string) => string> = {
+function formatearMonto(monto: number): string {
+  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(monto)
+}
+
+const MENSAJE_POR_ESTADO: Record<
+  EstadoPedido,
+  (fecha: string, turno: string, montoFinal: number | null) => string
+> = {
   confirmado: (fecha, turno) =>
     `Hola! Tu pedido para el ${fecha} (turno ${turno}) fue confirmado. Te avisamos cuando esté listo.`,
-  preparado: (fecha, turno) => `Tu pedido para el ${fecha} (turno ${turno}) ya está preparado.`,
+  preparado: (fecha, turno, montoFinal) =>
+    montoFinal != null
+      ? `Tu pedido para el ${fecha} (turno ${turno}) ya está preparado. Total a pagar: ${formatearMonto(montoFinal)}.`
+      : `Tu pedido para el ${fecha} (turno ${turno}) ya está preparado.`,
   entregado: (fecha, turno) =>
     `Tu pedido para el ${fecha} (turno ${turno}) fue entregado. ¡Gracias por tu compra!`,
   cancelado: (fecha, turno) => `Tu pedido para el ${fecha} (turno ${turno}) fue cancelado.`,
@@ -49,9 +59,9 @@ async function enviarWhatsApp(numero: string, mensaje: string): Promise<void> {
 }
 
 /**
- * Busca fecha/turno/celular del pedido, arma el mensaje según el estado, y
- * dispara el envío. Nunca lanza — un fallo acá no debe romper el flujo real
- * (confirmar/marcar/cancelar un pedido) que la llamó.
+ * Busca fecha/turno/celular/monto del pedido, arma el mensaje según el
+ * estado, y dispara el envío. Nunca lanza — un fallo acá no debe romper el
+ * flujo real (confirmar/marcar/cancelar un pedido) que la llamó.
  */
 export async function notificarEstadoPedido(pedidoId: string, estado: EstadoPedido): Promise<void> {
   try {
@@ -62,7 +72,7 @@ export async function notificarEstadoPedido(pedidoId: string, estado: EstadoPedi
     const supabase = createServiceClient()
     const { data, error } = await supabase
       .from('pedidos')
-      .select('fecha_entrega, turno_reparto, puntos_venta(celular)')
+      .select('fecha_entrega, turno_reparto, monto_final, puntos_venta(celular)')
       .eq('id', pedidoId)
       .maybeSingle()
 
@@ -74,6 +84,7 @@ export async function notificarEstadoPedido(pedidoId: string, estado: EstadoPedi
     const pedido = data as unknown as {
       fecha_entrega: string
       turno_reparto: 'manana' | 'tarde'
+      monto_final: number | null
       puntos_venta: { celular: string } | null
     }
 
@@ -84,7 +95,7 @@ export async function notificarEstadoPedido(pedidoId: string, estado: EstadoPedi
     }
 
     const turnoLabel = pedido.turno_reparto === 'manana' ? 'mañana' : 'tarde'
-    const mensaje = MENSAJE_POR_ESTADO[estado](pedido.fecha_entrega, turnoLabel)
+    const mensaje = MENSAJE_POR_ESTADO[estado](pedido.fecha_entrega, turnoLabel, pedido.monto_final)
     const numero = `+549${celular}`
 
     await enviarWhatsApp(numero, mensaje)
