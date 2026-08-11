@@ -1,22 +1,54 @@
 // src/app/admin/(dashboard)/configuracion/ConfiguracionForm.tsx
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import type { Configuracion } from '@/lib/types'
-import { actualizarBackupEmail } from './actions'
+import { actualizarConfiguracion } from './actions'
 
 export function ConfiguracionForm({ configuracion }: { configuracion: Configuracion }) {
   const [backupEmail, setBackupEmail] = useState(configuracion.backup_email ?? '')
+  const [listaPreciosUrl, setListaPreciosUrl] = useState(configuracion.lista_precios_url ?? '')
+  const [videoEmbalajeUrl, setVideoEmbalajeUrl] = useState(configuracion.video_embalaje_url ?? '')
+  const [subiendo, setSubiendo] = useState(false)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [guardado, setGuardado] = useState(false)
+
+  async function handleListaPreciosChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setSubiendo(true)
+    setError(null)
+    try {
+      const supabase = createClient()
+      const path = 'lista-precios.pdf'
+      const { error: uploadError } = await supabase.storage
+        .from('listas-precios')
+        .upload(path, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage.from('listas-precios').getPublicUrl(path)
+      setListaPreciosUrl(data.publicUrl)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al subir la lista de precios')
+    } finally {
+      setSubiendo(false)
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setGuardando(true)
     setError(null)
     setGuardado(false)
-    const result = await actualizarBackupEmail(backupEmail || null)
+    const result = await actualizarConfiguracion({
+      backup_email: backupEmail || null,
+      lista_precios_url: listaPreciosUrl || null,
+      video_embalaje_url: videoEmbalajeUrl || null,
+    })
     if ('error' in result) {
       setError(result.error)
     } else {
@@ -52,9 +84,54 @@ export function ConfiguracionForm({ configuracion }: { configuracion: Configurac
             venta, el catálogo y los pedidos de la semana. Dejalo vacío para no mandar nada.
           </p>
         </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700">
+            Lista de precios actualizada
+          </label>
+          <input
+            type="file"
+            onChange={handleListaPreciosChange}
+            disabled={subiendo}
+            className="w-full text-sm"
+          />
+          {subiendo && <p className="mt-1 text-sm text-neutral-500">Subiendo...</p>}
+          {listaPreciosUrl && !subiendo && (
+            <p className="mt-1 text-sm text-neutral-500">
+              Archivo cargado.{' '}
+              <a
+                href={listaPreciosUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                Ver actual
+              </a>
+            </p>
+          )}
+          <p className="mt-1 text-sm text-neutral-500">
+            Los comercios ven un botón para descargar este archivo. Subir uno nuevo reemplaza al
+            anterior.
+          </p>
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700">
+            Video de embalaje (link de YouTube)
+          </label>
+          <input
+            type="text"
+            value={videoEmbalajeUrl}
+            onChange={(e) => setVideoEmbalajeUrl(e.target.value)}
+            placeholder="https://www.youtube.com/watch?v=..."
+            className="w-full rounded-md border border-neutral-300 px-3 py-2.5 text-base"
+          />
+          <p className="mt-1 text-sm text-neutral-500">
+            Pegá el link tal cual lo copiás de &quot;Compartir&quot; en YouTube. Dejalo vacío para
+            no mostrar ningún video.
+          </p>
+        </div>
         <button
           type="submit"
-          disabled={guardando}
+          disabled={guardando || subiendo}
           className="rounded-md bg-primary px-4 py-2.5 text-base font-medium text-white hover:bg-primary-hover disabled:opacity-50"
         >
           {guardando ? 'Guardando...' : 'Guardar'}

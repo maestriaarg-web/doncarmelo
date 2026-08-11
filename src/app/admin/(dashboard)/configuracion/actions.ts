@@ -6,6 +6,12 @@ import { createClient } from '@/lib/supabase/server'
 import { obtenerRolActual } from '@/lib/admin/auth'
 import type { ActionResult } from '@/lib/types'
 
+export type ConfiguracionInput = {
+  backup_email: string | null
+  lista_precios_url: string | null
+  video_embalaje_url: string | null
+}
+
 // Server Actions se invocan por id de acción, no por ruta — proxy.ts protege
 // el RENDER de /admin/configuracion, pero no la ejecución de esta función si
 // alguien arma el request a mano. Por eso valida el rol del que llama por su
@@ -16,14 +22,15 @@ async function exigirAdmin(): Promise<{ userId: string } | { error: string }> {
   return { userId: actual.userId }
 }
 
-export async function actualizarBackupEmail(email: string | null): Promise<ActionResult> {
+export async function actualizarConfiguracion(input: ConfiguracionInput): Promise<ActionResult> {
   const auth = await exigirAdmin()
   if ('error' in auth) return auth
 
   const supabase = await createClient()
-  const { error } = await supabase.from('configuracion').update({ backup_email: email }).eq('id', 1)
+  const { error } = await supabase.from('configuracion').update(input).eq('id', 1)
 
   if (error) return { error: error.message }
   revalidatePath('/admin/configuracion')
+  revalidatePath('/pedido')
   return { success: true }
 }
