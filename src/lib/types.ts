@@ -43,6 +43,7 @@ export type PedidoConItems = {
   tipo_etiqueta: 'grande' | 'chica' | 'ambas'
   estado: string
   creado_en: string
+  monto_final: number | null
   pedido_items: {
     cantidad: number
     producto_id: string
@@ -64,6 +65,7 @@ export type PedidoAdmin = {
   estado: 'confirmado' | 'preparado' | 'entregado' | 'cancelado'
   fuera_de_horario: boolean
   creado_en: string
+  monto_final: number | null
   puntos_venta: {
     id: string
     nombre: string
@@ -78,6 +80,7 @@ export type PedidoAdmin = {
       nombre: string
       categoria: string
       unidad: string
+      precio_sugerido: number | null
     } | null
   }[]
 }
