@@ -2,7 +2,7 @@ import { createServiceClient } from '@/lib/supabase/service'
 import type { PedidoConItems, Producto } from '@/lib/types'
 
 const SELECT_PEDIDO_CON_ITEMS =
-  'id, fecha_entrega, turno_reparto, tipo_etiqueta, estado, creado_en, pedido_items(cantidad, producto_id, productos(nombre, unidad, precio_sugerido, activo, disponible))'
+  'id, fecha_entrega, turno_reparto, tipo_etiqueta, estado, creado_en, monto_final, pedido_items(cantidad, producto_id, productos(nombre, unidad, precio_sugerido, activo, disponible))'
 
 export async function obtenerHistorialPedidos(puntoVentaId: string): Promise<PedidoConItems[]> {
   const supabase = createServiceClient()

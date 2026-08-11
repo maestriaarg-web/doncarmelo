@@ -16,6 +16,10 @@ const ESTADO_LABEL: Record<string, string> = {
   cancelado: 'Cancelado',
 }
 
+function formatearMonto(monto: number): string {
+  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(monto)
+}
+
 export const dynamic = 'force-dynamic'
 
 export default async function HistorialPage() {
@@ -62,6 +66,12 @@ export default async function HistorialPage() {
               <p className="mt-1 text-xs text-neutral-400">
                 Etiqueta: {ETIQUETA_LABEL[pedido.tipo_etiqueta]}
               </p>
+              {(pedido.estado === 'preparado' || pedido.estado === 'entregado') &&
+                pedido.monto_final != null && (
+                  <p className="mt-1 text-sm font-medium text-foreground">
+                    Total a pagar: {formatearMonto(pedido.monto_final)}
+                  </p>
+                )}
             </li>
           )
         })}
