@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 
-const HORARIO_TEXTO =
-  'PEDIDOS HASTA LAS 9AM — REPARTO DE MAÑANA. DESPUÉS DE LAS 17HS — REPARTO DE TARDE. SÁBADOS POR LA TARDE NO HAY REPARTO.'
+const HORARIO_LINEAS = [
+  'PEDIDOS HASTA LAS 9AM SE REPARTEN DE 9 A 12.30',
+  'PEDIDOS DESPUÉS DE LAS 9AM, SE REPARTEN DE 17 A 20.',
+  'SÁBADOS POR LA TARDE NO HAY REPARTO',
+]
 
 /**
  * Acepta los formatos comunes de link de YouTube (watch?v=, youtu.be/,
@@ -40,8 +43,12 @@ export function HomeComercioBanner({
   const embedUrl = videoEmbalajeUrl ? extraerYoutubeEmbedUrl(videoEmbalajeUrl) : null
 
   return (
-    <div className="space-y-2 border-b border-neutral-200 bg-neutral-50 px-4 py-2">
-      <p className="text-center text-xs font-semibold text-neutral-700">{HORARIO_TEXTO}</p>
+    <div className="space-y-2 border-b border-amber-200 bg-amber-50 px-4 py-3">
+      <div className="text-center text-sm font-bold leading-snug text-amber-900 sm:text-base">
+        {HORARIO_LINEAS.map((linea) => (
+          <p key={linea}>{linea}</p>
+        ))}
+      </div>
 
       {(embedUrl || listaPreciosUrl) && (
         <div className="flex flex-wrap justify-center gap-3 text-sm">
