@@ -67,6 +67,7 @@ export type PedidoAdmin = {
   fuera_de_horario: boolean
   creado_en: string
   monto_final: number | null
+  cargado_por_admin: boolean
   puntos_venta: {
     id: string
     nombre: string

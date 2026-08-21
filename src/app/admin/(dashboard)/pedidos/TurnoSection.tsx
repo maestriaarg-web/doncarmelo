@@ -1,5 +1,6 @@
 import type { PedidoAdmin } from '@/lib/types'
 import { consolidarPreparacion, type ItemPreparacion } from '@/lib/admin/pedidos'
+import { formatearHoraArgentina } from '@/lib/comercio/corte'
 import { EstadoPedidoAcciones } from './EstadoPedidoAcciones'
 
 const SIN_ZONA = 'Sin zona'
@@ -114,9 +115,14 @@ export function TurnoSection({
                   {pedidosDeZona.map((pedido) => (
                     <li key={pedido.id} className="rounded-lg border border-neutral-200 bg-white p-3">
                       <div className="flex items-center justify-between">
-                        <p className="font-medium text-foreground">
-                          {pedido.puntos_venta?.nombre ?? 'Punto de venta'}
-                        </p>
+                        <div>
+                          <p className="font-medium text-foreground">
+                            {pedido.puntos_venta?.nombre ?? 'Punto de venta'}
+                          </p>
+                          <p className="text-xs text-neutral-400">
+                            Pedido a las {formatearHoraArgentina(new Date(pedido.creado_en))}
+                          </p>
+                        </div>
                         <a
                           href={`/admin/remito/${pedido.id}`}
                           target="_blank"
@@ -127,8 +133,13 @@ export function TurnoSection({
                         </a>
                       </div>
                       {pedido.fuera_de_horario && (
-                        <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                        <span className="mt-1 mr-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
                           ⚠ Fuera de horario
+                        </span>
+                      )}
+                      {pedido.cargado_por_admin && (
+                        <span className="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                          📞 Cargado por admin
                         </span>
                       )}
                       <ul className="mt-2 space-y-1 text-sm text-neutral-700">

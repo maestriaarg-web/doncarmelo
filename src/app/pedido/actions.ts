@@ -1,8 +1,14 @@
 'use server'
 
-import { getPuntoVentaId } from '@/lib/comercio/session'
+import { redirect } from 'next/navigation'
+import { getPuntoVentaId, clearPuntoVentaCookie } from '@/lib/comercio/session'
 import { obtenerUltimoPedido } from '@/lib/comercio/pedidos'
 import type { ItemCarrito } from '@/lib/types'
+
+export async function cerrarSesionComercio() {
+  await clearPuntoVentaCookie()
+  redirect('/')
+}
 
 export type RepetirPedidoResultado =
   | { error: string }

@@ -29,6 +29,12 @@ export default async function PedidosPage({
         <h1 className="text-xl font-semibold text-foreground">Pedidos</h1>
         <div className="flex items-center gap-3">
           <Link
+            href="/admin/pedidos/nuevo"
+            className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-hover"
+          >
+            + Cargar pedido manual
+          </Link>
+          <Link
             href={`/admin/pedidos?fecha=${sumarDias(fecha, -1)}`}
             className="rounded-md border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700"
           >

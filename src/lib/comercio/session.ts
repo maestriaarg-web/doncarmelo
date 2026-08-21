@@ -18,3 +18,8 @@ export async function setPuntoVentaCookie(puntoVentaId: string) {
     path: '/',
   })
 }
+
+export async function clearPuntoVentaCookie() {
+  const cookieStore = await cookies()
+  cookieStore.delete(COMERCIO_COOKIE_NAME)
+}

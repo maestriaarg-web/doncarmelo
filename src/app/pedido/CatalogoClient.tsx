@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Producto, ItemCarrito } from '@/lib/types'
 import { BrandMark } from '@/components/BrandMark'
-import { repetirUltimoPedido } from './actions'
+import { repetirUltimoPedido, cerrarSesionComercio } from './actions'
 
 const CARRITO_KEY = 'don_carmelo_carrito'
 const AVISO_KEY = 'don_carmelo_aviso'
@@ -107,9 +107,16 @@ export function CatalogoClient({
     <div className="pb-24">
       <div className="flex items-center justify-between px-4 pt-3">
         <BrandMark />
-        <Link href="/pedido/historial" className="text-sm font-medium text-neutral-600">
-          Ver historial de pedidos →
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/pedido/historial" className="text-sm font-medium text-neutral-600">
+            Ver historial de pedidos →
+          </Link>
+          <form action={cerrarSesionComercio}>
+            <button type="submit" className="text-sm font-medium text-neutral-500 hover:text-neutral-900">
+              Cerrar sesión
+            </button>
+          </form>
+        </div>
       </div>
 
       {hayHistorial && (
